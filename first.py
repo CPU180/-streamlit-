@@ -2,13 +2,20 @@ import streamlit as st # 导入Streamlit并用st代表它
 import numpy as np #导入numpy库调用表格内容
 import pandas as pd #导入pandas库调用表格内容
 
+### 当前版本号0.6.12.4 
+### （编辑后请保证与页脚版本号一致，以头部版本号为第一版本号）
+###---------------------------------------------------------
+
+# 网站上方页面标题设置
+# 必须作为第一个Streamlit命令！
+st.set_page_config(
+    page_title="这是一个整合多功能的小网站！",
+    page_icon="💡",
+    layout="wide"
+)
 
 
 
-
-st.markdown('##### 当前版本号0.6.12.2')
-
-### 当前版本号0.6.12.2
 ###----------------------------------------------------------------------------------
 ###  模块①
 ###  基本信息，streamlit课程进度，代码展示
@@ -162,6 +169,203 @@ st.map(restaurants[["latitude", "longitude", "餐厅名称"]])  # 只传需要�
 
 
 
+import streamlit.components.v1 as components
+
+
+# 配置
+TENCENT_API_KEY = "7QTBZ-NDMLM-GAQ6N-6YN54-XVWL2-5WFQS"
+
+
+
+
+# 生成地图
+# 1. 首先打印列名确认
+print("当前数据列名:", restaurants.columns.tolist())
+
+# 2. 根据实际列名进行处理（以下是示例，请根据你的实际列名调整）
+# 如果列名是中文的'latitude'和'longitude':
+if 'latitude' in restaurants.columns and 'longitude' in restaurants.columns:
+    pass  # 列名已经正确
+# 如果列名是其他中文名（如'纬度'/'经度'）:
+elif '纬度' in restaurants.columns and '经度' in restaurants.columns:
+    restaurants = restaurants.rename(columns={
+        '纬度': 'latitude',
+        '经度': 'longitude'
+    })
+else:
+    st.error(f"无法找到经纬度列，现有列名: {restaurants.columns.tolist()}")
+    st.stop()
+
+# 3. 确保数据类型正确
+restaurants['latitude'] = pd.to_numeric(restaurants['latitude'], errors='coerce')
+restaurants['longitude'] = pd.to_numeric(restaurants['longitude'], errors='coerce')
+
+# 4. 移除无效坐标的行
+restaurants = restaurants.dropna(subset=['latitude', 'longitude'])
+
+
+#地图参数设置（调用腾讯定位服务API）
+map_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://map.qq.com/api/gljs?v=2.exp&key={TENCENT_API_KEY}"></script>
+    <style>
+        #map {{
+            width: 100%;
+            height: 500px;
+            margin: 0;
+            padding: 0;
+        }}
+        .info-window {{
+            min-width: 200px;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }}
+        .info-window h3 {{
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #333;
+        }}
+        .info-window p {{
+            margin: 4px 0;
+            font-size: 14px;
+            color: #666;
+        }}
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // 1. 确保数据正确转换
+        var restaurantData = {restaurants.to_json(orient='records', force_ascii=False, default_handler=str)};
+        
+        // 2. 数据预处理
+        var validRestaurants = restaurantData.filter(function(restaurant) {{
+            var lat = Number(restaurant.latitude);
+            var lng = Number(restaurant.longitude);
+            return !isNaN(lat) && !isNaN(lng) && 
+                   lat >= -90 && lat <= 90 && 
+                   lng >= -180 && lng <= 180;
+        }});
+        
+        console.log('有效餐厅数据:', validRestaurants);
+        
+        // 3. 初始化地图函数
+        function initMap() {{
+            try {{
+                // 创建地图实例
+                var map = new TMap.Map("map", {{
+                    center: new TMap.LatLng(22.82, 108.35),
+                    zoom: 12,
+                    mapStyleId: "卫星图",
+                    pitch: 30  // 添加倾斜角度增强视觉效果
+                }});
+                
+                console.log('地图初始化完成');
+                
+                // 4. 准备标记点数据
+                var geometries = validRestaurants.map(function(restaurant) {{
+                    return {{
+                        id: restaurant['餐厅名称'].toString(),
+                        styleId: "default",
+                        position: new TMap.LatLng(
+                            Number(restaurant.latitude), 
+                            Number(restaurant.longitude)
+                        ),
+                        properties: {{
+                            name: restaurant['餐厅名称'],
+                            category: restaurant['类型'],
+                            rating: restaurant['评分'],
+                            price: restaurant['人均消费(元)'],
+                            hours: restaurant['营业时间']
+                        }}
+                    }};
+                }});
+                
+                console.log('标记点数据:', geometries);
+                
+                // 5. 创建标记
+                var markerLayer = new TMap.MultiMarker({{
+                    map: map,
+                    styles: {{
+                        "default": new TMap.MarkerStyle({{
+                            width: 25,
+                            height: 35,
+                            anchor: {{ x: 12, y: 35 }},
+                            src: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png"
+                        }})
+                    }},
+                    geometries: geometries
+                }});
+                
+                console.log('标记点创建完成');
+                
+                // 6. 信息窗口设置
+                var infoWindow = new TMap.InfoWindow({{
+                    map: map,
+                    enableCustom: true,
+                    offset: {{ x: 0, y: -35 }}
+                }});
+                
+                // 7. 点击事件处理
+                markerLayer.on("click", function(evt) {{
+                    console.log('标记点击:', evt);
+                    var props = evt.geometry.properties;
+                    infoWindow.setPosition(evt.geometry.position);
+                    infoWindow.setContent(
+                        '<div class="info-window">' +
+                        '<h3>' + props.name + '</h3>' +
+                        '<p><b>类型:</b> ' + props.category + '</p>' +
+                        '<p><b>评分:</b> ' + props.rating + '/5.0</p>' +
+                        '<p><b>人均:</b> ￥' + props.price + '元</p>' +
+                        '<p><b>营业时间:</b> ' + props.hours + '</p>' +
+                        '</div>'
+                    );
+                    infoWindow.open();
+                }});
+                
+            }} catch (error) {{
+                console.error('地图初始化错误:', error);
+                document.getElementById('map').innerHTML = 
+                    '<div style="color:red;padding:20px;text-align:center">' +
+                    '<h3>地图加载失败</h3>' +
+                    '<p>' + error.message + '</p>' +
+                    '</div>';
+            }}
+        }}
+        
+        // 8. 地图API加载检测
+        function checkTMapLoaded() {{
+            if (typeof TMap !== 'undefined') {{
+                initMap();
+            }} else {{
+                setTimeout(checkTMapLoaded, 100);
+            }}
+        }}
+        
+        // 9. 页面加载完成后执行
+        window.onload = function() {{
+            checkTMapLoaded();
+        }};
+    </script>
+</body>
+</html>
+"""
+
+
+
+#若想测试，删除下处的注释即可显示地图
+
+
+
+# 显示地图
+#st.title("🍜 南宁餐厅地图（腾讯卫星图）")
+#components.html(map_html, height=600)
+
+
 
 
 ###-------------------------------------------------------------------------------
@@ -205,20 +409,78 @@ st.subheader('播放音频')
 st.audio(audio_file)
 
 
+
+
+
+
+
+
 import streamlit as st
 from streamlit.components.v1 import html
 
 
-###-------------------------------------------
 
-# B站视频数据 (BV号列表)"此处为下方小字显示部分": "此处为BV号填写处"
+# 自定义CSS样式
+st.markdown("""
+<style>
+    /* 主标题样式 */
+    .main-title {
+        font-size: 2.5rem;
+        text-align: center;
+        color: #00a1d6;
+        margin-bottom: 1.5rem;
+        font-weight: bold;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    /* 自定义按钮样式 */
+    .custom-btn {
+        background-color: white !important;
+        color: black !important;
+        border: 2px solid #ff4b4b !important;
+        border-radius: 8px !important;
+        padding: 0.5rem 1rem !important;
+        font-weight: bold !important;
+        transition: all 0.3s !important;
+        width: 100% !important;
+    }
+    .custom-btn:hover {
+        background-color: #fff0f0 !important;
+        transform: scale(1.05) !important;
+    }
+    
+    /* 视频容器样式 */
+    .video-container {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    /* 当前播放信息样式 */
+    .current-playing {
+        font-size: 1.1rem;
+        text-align: center;
+        padding: 0.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# 美化后的主标题
+st.markdown('<p class="main-title">🎬 B站视频播放器</p>', unsafe_allow_html=True)
+
+# B站视频数据
 video_data = {
-    "视频1,BV1ST411E7wb": "BV1ST411E7wb",  
-    "视频2,BV13A4y1Z7m2": "BV13A4y1Z7m2",
-    "视频3,BV1co7Bz6Ehp": "BV1co7Bz6Ehp"
+    "视频1 - 高山风景视频": "BV1ST411E7wb",  
+    "视频2 - 这大概就是美到窒息的感觉吧": "BV13A4y1Z7m2",
+    "视频3 - 仿佛来到了童话里的世界~": "BV1co7Bz6Ehp",
+    "视频4 - 日落后的二十分钟，被称为蓝调时刻": "BV1gLB4YwEXH",  
+    "视频5 - 久在樊笼里，复得返自然": "BV1exrdYZEfM",
+    "视频6 - 这是地理课本里的峡湾地貌 也是我国唯一没有的地貌": "BV1d9f4YoEwV"
 }
-
-###-------------------------------------------
 
 # 获取视频列表和当前索引
 video_list = list(video_data.values())
@@ -238,7 +500,22 @@ current_bv = st.session_state.get("current_video", video_list[current_index])
 
 # 创建容器放置视频和按钮
 with st.container():
-    # B站播放器HTML模板（设置初始音量30%）
+    # 视频选择下拉菜单
+    selected_title = st.selectbox(
+        "选择视频",
+        options=list(video_data.keys()),
+        index=current_index,
+        key="video_selector"
+    )
+    
+    # 如果下拉菜单选择变化，更新当前视频
+    if selected_title != list(video_data.keys())[current_index]:
+        st.session_state.current_index = list(video_data.keys()).index(selected_title)
+        st.session_state.current_video = video_data[selected_title]
+        st.rerun()
+    
+    # B站播放器HTML模板
+    st.markdown('<div class="video-container">', unsafe_allow_html=True)
     bili_player = f"""
     <div style="margin:10px 0">
         <iframe 
@@ -252,18 +529,28 @@ with st.container():
     </div>
     """
     html(bili_player, height=520)
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    # 创建导航按钮
-    col1, col2 = st.columns([1, 1])
+    # 创建导航按钮（优化后的样式和布局）
+    col1, col2, col3 = st.columns([1, 1, 4])  # 调整比例
     with col1:
-        if st.button("上一个", key="prev_btn"):
+        if st.button("◀ 上一个", key="prev_btn", help="播放上一个视频"):
             navigate("prev")
     with col2:
-        if st.button("下一个", key="next_btn"):
+        if st.button("下一个 ▶", key="next_btn", help="播放下一个视频"):
             navigate("next")
     
     # 显示当前视频标题
     current_title = list(video_data.keys())[current_index]
-    st.caption(f"当前播放: {current_title}")
+    st.markdown(f'<div class="current-playing">🎥 当前播放: <strong>{current_title}</strong></div>', unsafe_allow_html=True)
 
 
+
+
+# 添加页脚
+st.markdown("---")
+st.markdown("""
+<div style="text-align: center; color: #666; font-size: 0.9rem;">
+    <p>© 2025 个人网页制作演示 | CPU180 版本号：0.6.12.4</p>
+</div>
+""", unsafe_allow_html=True)
