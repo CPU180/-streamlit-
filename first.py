@@ -1,9 +1,9 @@
 import streamlit as st # 导入Streamlit并用st代表它
 import numpy as np #导入numpy库调用表格内容
 import pandas as pd #导入pandas库调用表格内容
-
-### 当前版本号0.6.12.4 
-### （编辑后请保证与页脚版本号一致，以头部版本号为第一版本号）
+###---------------------------------------------------------
+### 当前版本号0.6.13.4
+### 注释说明，###为分割线及特殊注释，#为普通注释，###>>>>>为数据添加处
 ###---------------------------------------------------------
 
 # 网站上方页面标题设置
@@ -23,13 +23,13 @@ st.set_page_config(
 
 
 # 标题格式
-st.markdown('# 学生小陆-数学档案😇')
+st.markdown('# 学生小陆-数字档案😇')
 
 st.markdown('# 😃基本信息')
 
-st.markdown('''# 姓名: *陆小陆😁*
+st.markdown('''# 姓名: *小陆😁*
 #### 班级: *23级练习生一班😉*
-#### 学号: *007😇*''')
+#### 学号: *9527😇*''')
 
 
 # 创建一个为基本信息的标题，并指定锚点为基本信息
@@ -38,12 +38,12 @@ st.markdown('### :red[游戏] 🎮, :blue[游泳]🏊︎ ,:orange[唱跳]🎤 , 
 
 #调用指标类展示元素metric
 st.subheader('')
-st.metric(label="当前学期", value="大二 上学期")
+st.metric(label="当前学期", value="大二 下学期")
 st.subheader('学习情况')
 
 c1, c2, c3 = st.columns(3)
 c1.metric(label="当前周数", value="15/20", delta="剩余5周")
-c2.metric(label="四年级进度", value="1/2", delta="已过四级")
+c2.metric(label="四六级进度", value="1/2", delta="已过四级")
 c3.metric(label="人生进度", value="20/100", delta="未来可期")
 
 #对于箭头的表示通过在内容前使用+或-进行展示
@@ -113,7 +113,7 @@ st.code(javascript_code, language='javascript',line_numbers=True)
 ###----------------------------------------------------------------------------------
 
 
-###-------------------------------------------
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ### 餐厅数据 切勿随意改动
 
 restaurants = pd.DataFrame({
@@ -126,7 +126,7 @@ restaurants = pd.DataFrame({
     "longitude": [108.324614,108.387910,108.262110,108.313493,108.326838,108.257296,108.310691,108.309224,108.267817,108.284216,108.332567,108.321484,108.312827,108.306724,108.339396,108.320656,108.315969,108.318908,108.370764,108.300288,108.343062,108.378891,108.368414]
 })
 
-###-------------------------------------------
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
 
@@ -154,55 +154,80 @@ data_for_chart = restaurants.set_index("餐厅名称")["评分"]
 # 绘制面积图
 st.area_chart(data_for_chart)
 
+# 绘制折线图
+st.markdown('### 价格走势折线图')
 
+data = {
+    '月份': ['一月', '二月', '三月', '四月', '五月', '六月', 
+           '七月', '八月', '九月', '十月', '十一月', '十二月'],
+    '书记老友粉': [15, 18, 14, 17, 19, 31, 22, 13, 17, 13, 11, 21],
+    '天福香老友粉': [18, 16, 21, 24, 45, 21, 12, 24, 26, 16, 18, 25],
+    '三品王牛肉粉': [23, 21, 34, 23, 25, 35, 53, 27, 21, 24, 32, 14],
+    '姜胖胖自助烤肉': [115, 145, 95, 122, 165, 116, 131, 151, 125, 99, 123, 156],
+    '乐观面屋(东盟店)': [27, 25, 34, 35, 21, 41, 12, 35, 23, 34, 28, 45]
+}
+
+df = pd.DataFrame(data)
+df.index = pd.RangeIndex(start=1, stop=13, name='序号')  # 更规范的设置索引方式
+
+st.line_chart(df, x='月份')
+ 
 
 import pydeck as pdk
 
-# 方法1：修复 st.map() 的悬停
-st.header("基础地图（自动悬停）")
-st.map(restaurants[["latitude", "longitude", "餐厅名称"]])  # 只传需要的列
-
-
 
 ###-------------------------------------------------------------------------------
-###腾讯地图模块
-
+### 腾讯地图模块(正在完善中)
+### 点击显示功能尚未实现
 
 
 import streamlit.components.v1 as components
 
 
-# 配置
+# API配置
 TENCENT_API_KEY = "7QTBZ-NDMLM-GAQ6N-6YN54-XVWL2-5WFQS"
 
 
 
 
-# 生成地图
-# 1. 首先打印列名确认
-print("当前数据列名:", restaurants.columns.tolist())
+# 确保列名正确 - 直接使用数据中的实际列名
+required_columns = {
+    'name': '餐厅名称',
+    'category': '类型',
+    'rating': '评分',
+    'price': '人均消费(元)',
+    'hours': '营业时间',
+    'latitude': 'latitude',
+    'longitude': 'longitude'
+}
 
-# 2. 根据实际列名进行处理（以下是示例，请根据你的实际列名调整）
-# 如果列名是中文的'latitude'和'longitude':
-if 'latitude' in restaurants.columns and 'longitude' in restaurants.columns:
-    pass  # 列名已经正确
-# 如果列名是其他中文名（如'纬度'/'经度'）:
-elif '纬度' in restaurants.columns and '经度' in restaurants.columns:
-    restaurants = restaurants.rename(columns={
-        '纬度': 'latitude',
-        '经度': 'longitude'
-    })
-else:
-    st.error(f"无法找到经纬度列，现有列名: {restaurants.columns.tolist()}")
+# 检查所有必要列是否存在
+missing_cols = [col for col in required_columns.values() if col not in restaurants.columns]
+if missing_cols:
+    st.error(f"数据中缺少必要列: {missing_cols}")
     st.stop()
 
-# 3. 确保数据类型正确
+# 重命名列以匹配地图代码中的预期字段名
+restaurants = restaurants.rename(columns={
+    '餐厅名称': 'name',
+    '类型': 'category',
+    '评分': 'rating',
+    '人均消费(元)': 'price',
+    '营业时间': 'hours'
+})
+
+# 确保经纬度是数值类型
 restaurants['latitude'] = pd.to_numeric(restaurants['latitude'], errors='coerce')
 restaurants['longitude'] = pd.to_numeric(restaurants['longitude'], errors='coerce')
 
-# 4. 移除无效坐标的行
+# 移除无效坐标
 restaurants = restaurants.dropna(subset=['latitude', 'longitude'])
 
+# 显示处理后的数据供检查
+#st.write("处理后的餐厅数据:", restaurants.head())
+
+# 然后使用之前提供的地图HTML代码
+# 注意确保TENCENT_API_KEY已正确设置
 
 #地图参数设置（调用腾讯定位服务API）
 map_html = f"""
@@ -213,11 +238,16 @@ map_html = f"""
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://map.qq.com/api/gljs?v=2.exp&key={TENCENT_API_KEY}"></script>
     <style>
-        #map {{
+        #map-container {{
             width: 100%;
             height: 500px;
             margin: 0;
             padding: 0;
+            position: relative;
+        }}
+        #map {{
+            width: 100%;
+            height: 100%;
         }}
         .info-window {{
             min-width: 200px;
@@ -234,102 +264,123 @@ map_html = f"""
             font-size: 14px;
             color: #666;
         }}
+        #loading {{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }}
     </style>
 </head>
 <body>
-    <div id="map"></div>
+    <div id="map-container">
+        <div id="loading">地图加载中...</div>
+        <div id="map"></div>
+    </div>
     <script>
-        // 1. 确保数据正确转换
-        var restaurantData = {restaurants.to_json(orient='records', force_ascii=False, default_handler=str)};
+        // 更健壮的数据处理
+        function processRestaurantData(data) {{
+            return data.map(restaurant => {{
+                return {{
+                    id: restaurant.id || Math.random().toString(36).substr(2, 9),
+                    name: restaurant.name || '未知餐厅',
+                    category: restaurant.category || '未知类型',
+                    rating: restaurant.rating || '无评分',
+                    price: restaurant.price || '未知',
+                    hours: restaurant.hours || '未知',
+                    latitude: Number(restaurant.latitude),
+                    longitude: Number(restaurant.longitude)
+                }};
+            }}).filter(restaurant => 
+                !isNaN(restaurant.latitude) && 
+                !isNaN(restaurant.longitude) &&
+                Math.abs(restaurant.latitude) <= 90 &&
+                Math.abs(restaurant.longitude) <= 180
+            );
+        }}
         
-        // 2. 数据预处理
-        var validRestaurants = restaurantData.filter(function(restaurant) {{
-            var lat = Number(restaurant.latitude);
-            var lng = Number(restaurant.longitude);
-            return !isNaN(lat) && !isNaN(lng) && 
-                   lat >= -90 && lat <= 90 && 
-                   lng >= -180 && lng <= 180;
-        }});
-        
-        console.log('有效餐厅数据:', validRestaurants);
-        
-        // 3. 初始化地图函数
+        // 初始化地图
         function initMap() {{
             try {{
-                // 创建地图实例
-                var map = new TMap.Map("map", {{
-                    center: new TMap.LatLng(22.82, 108.35),
+                // 隐藏加载提示
+                document.getElementById('loading').style.display = 'none';
+                
+                // 处理数据
+                var rawData = {restaurants.to_json(orient='records', force_ascii=False)};
+                var restaurantData = processRestaurantData(rawData);
+                
+                if (restaurantData.length === 0) {{
+                    throw new Error('没有有效的餐厅位置数据');
+                }}
+                
+                // 计算中心点
+                var centerLat = restaurantData.reduce((sum, r) => sum + r.latitude, 0) / restaurantData.length;
+                var centerLng = restaurantData.reduce((sum, r) => sum + r.longitude, 0) / restaurantData.length;
+                
+                // 创建地图
+                var map = new TMap.Map(document.getElementById('map'), {{
+                    center: new TMap.LatLng(centerLat, centerLng),
                     zoom: 12,
-                    mapStyleId: "卫星图",
-                    pitch: 30  // 添加倾斜角度增强视觉效果
+                    mapStyleId: "style1"
                 }});
                 
-                console.log('地图初始化完成');
-                
-                // 4. 准备标记点数据
-                var geometries = validRestaurants.map(function(restaurant) {{
-                    return {{
-                        id: restaurant['餐厅名称'].toString(),
-                        styleId: "default",
-                        position: new TMap.LatLng(
-                            Number(restaurant.latitude), 
-                            Number(restaurant.longitude)
-                        ),
-                        properties: {{
-                            name: restaurant['餐厅名称'],
-                            category: restaurant['类型'],
-                            rating: restaurant['评分'],
-                            price: restaurant['人均消费(元)'],
-                            hours: restaurant['营业时间']
-                        }}
-                    }};
-                }});
-                
-                console.log('标记点数据:', geometries);
-                
-                // 5. 创建标记
+                // 创建标记
                 var markerLayer = new TMap.MultiMarker({{
                     map: map,
                     styles: {{
-                        "default": new TMap.MarkerStyle({{
+                        default: new TMap.MarkerStyle({{
                             width: 25,
                             height: 35,
                             anchor: {{ x: 12, y: 35 }},
                             src: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png"
                         }})
                     }},
-                    geometries: geometries
+                    geometries: restaurantData.map(r => ({{
+                        id: r.id,
+                        styleId: "default",
+                        position: new TMap.LatLng(r.latitude, r.longitude),
+                        properties: {{
+                            name: r.name,
+                            category: r.category,
+                            rating: r.rating,
+                            price: r.price,
+                            hours: r.hours
+                        }}
+                    }}))
                 }});
                 
-                console.log('标记点创建完成');
-                
-                // 6. 信息窗口设置
+                // 信息窗口
                 var infoWindow = new TMap.InfoWindow({{
                     map: map,
                     enableCustom: true,
                     offset: {{ x: 0, y: -35 }}
                 }});
                 
-                // 7. 点击事件处理
+                // 点击事件
                 markerLayer.on("click", function(evt) {{
-                    console.log('标记点击:', evt);
                     var props = evt.geometry.properties;
-                    infoWindow.setPosition(evt.geometry.position);
                     infoWindow.setContent(
                         '<div class="info-window">' +
                         '<h3>' + props.name + '</h3>' +
                         '<p><b>类型:</b> ' + props.category + '</p>' +
-                        '<p><b>评分:</b> ' + props.rating + '/5.0</p>' +
-                        '<p><b>人均:</b> ￥' + props.price + '元</p>' +
+                        '<p><b>评分:</b> ' + props.rating + '</p>' +
+                        '<p><b>人均:</b> ' + props.price + '</p>' +
                         '<p><b>营业时间:</b> ' + props.hours + '</p>' +
                         '</div>'
                     );
+                    infoWindow.setPosition(evt.geometry.position);
                     infoWindow.open();
                 }});
                 
             }} catch (error) {{
                 console.error('地图初始化错误:', error);
-                document.getElementById('map').innerHTML = 
+                document.getElementById('loading').innerHTML = 
                     '<div style="color:red;padding:20px;text-align:center">' +
                     '<h3>地图加载失败</h3>' +
                     '<p>' + error.message + '</p>' +
@@ -337,33 +388,27 @@ map_html = f"""
             }}
         }}
         
-        // 8. 地图API加载检测
-        function checkTMapLoaded() {{
+        // 检查API是否加载
+        function checkAPI() {{
             if (typeof TMap !== 'undefined') {{
                 initMap();
             }} else {{
-                setTimeout(checkTMapLoaded, 100);
+                setTimeout(checkAPI, 100);
             }}
         }}
         
-        // 9. 页面加载完成后执行
-        window.onload = function() {{
-            checkTMapLoaded();
-        }};
+        // 文档加载后执行
+        document.addEventListener('DOMContentLoaded', function() {{
+            checkAPI();
+        }});
     </script>
 </body>
 </html>
 """
 
-
-
-#若想测试，删除下处的注释即可显示地图
-
-
-
 # 显示地图
-#st.title("🍜 南宁餐厅地图（腾讯卫星图）")
-#components.html(map_html, height=600)
+st.title("🍜 南宁餐厅地图（腾讯卫星图）")
+components.html(map_html, height=600)
 
 
 
@@ -381,15 +426,18 @@ map_html = f"""
 ###  多媒体内容展示，包含图片展示，音频展示，视频播放器
 ###----------------------------------------------------------------------------------
 
+st.markdown('<p class="main-title">图片展示模块</p>', unsafe_allow_html=True)
 
-###-------------------------------------------
+
+
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # 图片网址
-images = ["https://eskipaper.com/images/mountains-1.jpg",
+images = ["https://wallpaperaccess.com/full/1414728.jpg",
           "https://wallpaperaccess.com/full/1167990.jpg",
           "https://wallpapercave.com/wp/D3r6gVH.jpg"]
 
 
-###-------------------------------------------
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 st.subheader("一些风景图片")
 st.image(images)
 
@@ -398,12 +446,12 @@ st.image(images)
 import streamlit as st
 
 
-###-------------------------------------------
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # 读取音频URL
 audio_file = 'https://music.163.com/song/media/outer/url?id=28263184.mp3'
 
-###-------------------------------------------
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 st.subheader('播放音频')
 st.audio(audio_file)
@@ -413,7 +461,8 @@ st.audio(audio_file)
 
 
 
-
+###-------------------------------------------
+# 视频播放器代码块
 
 import streamlit as st
 from streamlit.components.v1 import html
@@ -472,6 +521,7 @@ st.markdown("""
 # 美化后的主标题
 st.markdown('<p class="main-title">🎬 B站视频播放器</p>', unsafe_allow_html=True)
 
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # B站视频数据
 video_data = {
     "视频1 - 高山风景视频": "BV1ST411E7wb",  
@@ -481,6 +531,9 @@ video_data = {
     "视频5 - 久在樊笼里，复得返自然": "BV1exrdYZEfM",
     "视频6 - 这是地理课本里的峡湾地貌 也是我国唯一没有的地貌": "BV1d9f4YoEwV"
 }
+
+###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 # 获取视频列表和当前索引
 video_list = list(video_data.values())
@@ -542,15 +595,175 @@ with st.container():
     
     # 显示当前视频标题
     current_title = list(video_data.keys())[current_index]
-    st.markdown(f'<div class="current-playing">🎥 当前播放: <strong>{current_title}</strong></div>', unsafe_allow_html=True)
+st.markdown(f'🎥 **当前播放: {current_title}**')
+
+###-------------------------------------------
 
 
 
 
+
+
+
+###----------------------------------------------------------------------------------
+###  模块④
+###  个人简历编辑器
+###----------------------------------------------------------------------------------
+
+st.markdown('<p class="main-title">个人简历编辑器</p>', unsafe_allow_html=True)
+
+
+from datetime import datetime
+from PIL import Image
+import io
+
+
+# 初始化session state
+if 'resume_data' not in st.session_state:
+    st.session_state.resume_data = {
+        'name': '',
+        'gender': '',
+        'email': '',
+        'birth_date': '',
+        'work_location': '',
+        'position': '',
+        'age': '',
+        'phone': '',
+        'bio': '',
+        'avatar': None
+    }
+
+# 创建两列
+col1, col2 = st.columns(2)
+
+with col1:
+    st.header("个人信息表单", divider="rainbow")
+    
+    # 表单输入
+    with st.form("resume_form"):
+        # 头像上传
+        uploaded_file = st.file_uploader("上传头像（最大200MB，支持JPG,JEPG,PNG格式）", type=['jpg', 'jpeg', 'png'])
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file)
+            image.thumbnail((200, 200))
+            img_byte_arr = io.BytesIO()
+            image.save(img_byte_arr, format='PNG')
+            st.session_state.resume_data['avatar'] = img_byte_arr.getvalue()
+        
+        st.session_state.resume_data['name'] = st.text_input("姓名*(必填)", st.session_state.resume_data['name'])
+        st.session_state.resume_data['gender'] = st.selectbox("性别*(必填)", ["", "男", "女"], 
+                                                          index=0 if not st.session_state.resume_data['gender'] else ["男", "女"].index(st.session_state.resume_data['gender']))
+        st.session_state.resume_data['email'] = st.text_input("邮箱*(必填)", st.session_state.resume_data['email'])
+        
+        # 日期输入
+        birth_date = st.date_input("出生日期*", 
+                                 value=datetime.strptime(st.session_state.resume_data['birth_date'], "%Y-%m-%d").date() 
+                                 if st.session_state.resume_data['birth_date'] else None,
+                                 min_value=datetime(1900, 1, 1),
+                                 max_value=datetime.now())
+        st.session_state.resume_data['birth_date'] = birth_date.strftime("%Y-%m-%d") if birth_date else ""
+        
+        st.session_state.resume_data['work_location'] = st.text_input("家庭住址", st.session_state.resume_data['work_location'])
+        st.session_state.resume_data['position'] = st.text_input("当前身份（如学生）*(必填)", st.session_state.resume_data['position'])
+        
+        # 计算年龄
+        if st.session_state.resume_data['birth_date']:
+            birth_year = datetime.strptime(st.session_state.resume_data['birth_date'], "%Y-%m-%d").year
+            current_year = datetime.now().year
+            st.session_state.resume_data['age'] = str(current_year - birth_year)
+        else:
+            st.session_state.resume_data['age'] = ""
+        
+        st.session_state.resume_data['phone'] = st.text_input("联系电话", st.session_state.resume_data['phone'], placeholder="010-0000-0001")
+        st.session_state.resume_data['bio'] = st.text_area("个人简介", st.session_state.resume_data['bio'], 
+                                                        placeholder="请简要介绍自己...", height=150)
+        
+        submitted = st.form_submit_button("更新简历", use_container_width=True)
+        if submitted:
+            if not st.session_state.resume_data['name'] or not st.session_state.resume_data['gender'] or not st.session_state.resume_data['email'] or not st.session_state.resume_data['birth_date'] or not st.session_state.resume_data['position']:
+                st.error("请填写所有带*号的必填项")
+
+with col2:
+    st.header("简历预览", divider="rainbow")
+    
+    # 简历样式
+    st.markdown("""
+    <style>
+    .resume-box {
+        border: 1px solid #e0e0e0;
+        padding: 25px;
+        border-radius: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .resume-header {
+        border-bottom: 2px solid #4a6fa5;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+    .empty-field {
+        color: #999999;
+        font-style: italic;
+    }
+    .section-title {
+        color: #4a6fa5;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # 简历内容
+    with st.container():
+        st.markdown('<div class="resume-box">', unsafe_allow_html=True)
+        
+        # 头部信息
+        col_header1, col_header2 = st.columns([1, 3])
+        with col_header1:
+            if st.session_state.resume_data['avatar']:
+                st.image(Image.open(io.BytesIO(st.session_state.resume_data['avatar'])), width=100)
+            else:
+                st.image(Image.new('RGB', (100, 100), color='lightgray'), width=100)
+        
+        # 基本信息
+        st.markdown('<p class="section-title">基本信息</p>', unsafe_allow_html=True)
+        cols = st.columns(2)
+        with cols[0]:
+            st.text(f"年龄: {st.session_state.resume_data['age'] or '未填写'}")
+            st.text(f"性别: {st.session_state.resume_data['gender'] or '未填写'}")
+        with cols[1]:
+            st.text(f"邮箱: {st.session_state.resume_data['email'] or '未填写'}")
+            st.text(f"电话: {st.session_state.resume_data['phone'] or '010-0000-0001'}")
+        
+        st.divider()
+        
+        # 个人信息
+        st.markdown('<p class="section-title">个人信息</p>', unsafe_allow_html=True)
+        cols = st.columns(2)
+        with cols[0]:
+            st.text(f"出生日期: {st.session_state.resume_data['birth_date'] or '未填写'}")
+        with cols[1]:
+            st.text(f"工作地点: {st.session_state.resume_data['work_location'] or '未填写'}")
+        
+        st.divider()
+        
+        # 个人简介
+        st.markdown('<p class="section-title">个人简介</p>', unsafe_allow_html=True)
+        st.text(st.session_state.resume_data['bio'] or "请简要介绍自己...")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+
+
+
+
+###=====================================================================
+# 请在此段代码上方添加新代码！
 # 添加页脚
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; font-size: 0.9rem;">
-    <p>© 2025 个人网页制作演示 | CPU180 版本号：0.6.12.4</p>
+    <p>© 2025 个人网页制作演示 | CPU180 版本号：0.6.13.4</p>
 </div>
 """, unsafe_allow_html=True)
+###=====================================================================
