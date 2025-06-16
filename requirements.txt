@@ -1,11 +1,10 @@
 # 核心依赖
 streamlit==1.45.1
 pandas==2.2.2  # 明确支持 Python 3.13 的版本
-scikit-learn==1.5.0  # 必须与 pandas 2.2.2 兼容
-numpy==2.0.0  # pandas 2.2.2 的官方推荐版本
-Pillow>=10.0.0
-setuptools>=70.0.0
-
+scikit-learn==1.5.0  # 最新稳定版，兼容 Python 3.13
+numpy==2.0.0  # 与 scikit-learn 1.5.0 兼容的版本
+Pillow>=10.0.0  # 图片处理
+setuptools>=70.0.0  # 确保包含 distutils 功能
 # 必要工具库
 setuptools>=60.0.0
 protobuf>=6.31.1  # 升级到最新稳定版
