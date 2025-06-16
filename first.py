@@ -896,7 +896,6 @@ if page=="招聘个人信息简历投稿":
 
 
 
-'''
 ###----------------------------------------------------------------------------------
 ###  模块⑤
 ###  企鹅分类模型项目
@@ -1043,12 +1042,6 @@ elif page == "预测分类页面":
         st.success(f'预测结果：**{predict_result_species}**')
         with col_logo:
             st.image(get_image_path(f'{predict_result_species}.png'), width=300)
-
-'''
-
-
-
-
 
 
 
