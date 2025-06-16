@@ -1,4 +1,4 @@
-scikit-learn==1.5.0  # 最新稳定版，兼容 Python 3.13
+scikit-learn==1.7.0  # 最新稳定版，兼容 Python 3.13
 
 altair==5.5.0
 attrs==25.3.0
