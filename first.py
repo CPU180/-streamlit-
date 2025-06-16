@@ -2,7 +2,7 @@ import streamlit as st # 导入Streamlit并用st代表它
 import numpy as np #导入numpy库调用表格内容
 import pandas as pd #导入pandas库调用表格内容
 ###---------------------------------------------------------
-### 当前版本号0.6.16.6
+### 当前版本号0.6.16.5
 ### 注释说明，###为分割线及特殊注释，#为普通注释，###>>>>>为数据添加处
 ###---------------------------------------------------------
 
@@ -896,6 +896,7 @@ if page=="招聘个人信息简历投稿":
 
 
 
+
 ###----------------------------------------------------------------------------------
 ###  模块⑤
 ###  企鹅分类模型项目
@@ -933,54 +934,14 @@ def get_image_path(filename):
     """获取图片文件的完整路径"""
     return os.path.join(BASE_DIR, "images", filename)
 
+# 侧边栏导航
+with st.sidebar:
+    st.image(get_image_path('rigth_logo.png'), width=100)
+    st.title('请选择页面')
+    page = st.selectbox("请选择页面", ["简介页面", "预测分类页面", "企鹅分类"], label_visibility='collapsed')
 
-if page == "企鹅分类":
-    st.markdown('<p class="main-title">企鹅分类器</p>', unsafe_allow_html=True)
-
-    # 侧边栏导航
-    with st.sidebar:
-        st.image(get_image_path('rigth_logo.png'), width=100)
-        st.title('请选择页面')
-        page = st.selectbox("请选择页面", ["简介页面", "预测分类页面", "企鹅分类"], label_visibility='collapsed')
-
-
-
-
-    # 设置输出右对齐，防止中文不对齐
-    pd.set_option('display.unicode.east_asian_width', True)
-    # 读取数据集，使用相对路径
-    penguin_df = pd.read_csv(get_data_path('penguins-chinese.csv'), encoding='gbk')
-    # 输出数据框的前5行
-    st.write(penguin_df.head())
-
-    # 数据预处理
-    penguin_df.dropna(inplace=True)
-    output = penguin_df['企鹅的种类']
-    features = penguin_df[['企鹅栖息的岛屿', '喙的长度', '喙的深度', '翅膀的长度', '身体质量', '性别']]
-    features = pd.get_dummies(features)
-    output_codes, output_uniques = pd.factorize(output)
-
-    st.write('下面是去重后，目标输出变量的数据：')
-    st.write(output_uniques)
-    st.write('下面是独热编码后，特征列的数据：')
-    st.write(features.head())
-
-    # 模型训练和评估
-    x_train, x_test, y_train, y_test = train_test_split(features, output_codes, train_size=0.8)
-    rfc = RandomForestClassifier()
-    rfc.fit(x_train, y_train)
-    y_pred = rfc.predict(x_test)
-    score = accuracy_score(y_test, y_pred)
-    st.write(f'该模型的准确率是：{score}')
-
-    # 保存模型
-    with open(get_data_path('rfc_model.pkl'), 'wb') as f:
-        pickle.dump(rfc, f)
-    with open(get_data_path('output_uniques.pkl'), 'wb') as f:
-        pickle.dump(output_uniques, f)
-    st.success('保存成功，已生成相关文件。')
-
-elif page == "简介页面":
+# 根据选择的页面显示不同内容
+if page == "简介页面":
     st.title("企鹅分类器 :penguin:")
     st.header('数据集介绍')
     st.markdown("""帕尔默群岛企鹅数据集是用于数据探索和数据可视化的一个出色的数据集...""")
@@ -1043,6 +1004,44 @@ elif page == "预测分类页面":
         with col_logo:
             st.image(get_image_path(f'{predict_result_species}.png'), width=300)
 
+elif page == "企鹅分类":
+    st.markdown('<p class="main-title">企鹅分类器</p>', unsafe_allow_html=True)
+    
+    # 使用expander来创建可折叠的内容区域
+    with st.expander("显示企鹅分类数据和分析", expanded=True):
+        # 设置输出右对齐，防止中文不对齐
+        pd.set_option('display.unicode.east_asian_width', True)
+        # 读取数据集，使用相对路径
+        penguin_df = pd.read_csv(get_data_path('penguins-chinese.csv'), encoding='gbk')
+        # 输出数据框的前5行
+        st.write(penguin_df.head())
+
+        # 数据预处理
+        penguin_df.dropna(inplace=True)
+        output = penguin_df['企鹅的种类']
+        features = penguin_df[['企鹅栖息的岛屿', '喙的长度', '喙的深度', '翅膀的长度', '身体质量', '性别']]
+        features = pd.get_dummies(features)
+        output_codes, output_uniques = pd.factorize(output)
+
+        st.write('下面是去重后，目标输出变量的数据：')
+        st.write(output_uniques)
+        st.write('下面是独热编码后，特征列的数据：')
+        st.write(features.head())
+
+        # 模型训练和评估
+        x_train, x_test, y_train, y_test = train_test_split(features, output_codes, train_size=0.8)
+        rfc = RandomForestClassifier()
+        rfc.fit(x_train, y_train)
+        y_pred = rfc.predict(x_test)
+        score = accuracy_score(y_test, y_pred)
+        st.write(f'该模型的准确率是：{score}')
+
+        # 保存模型
+        with open(get_data_path('rfc_model.pkl'), 'wb') as f:
+            pickle.dump(rfc, f)
+        with open(get_data_path('output_uniques.pkl'), 'wb') as f:
+            pickle.dump(output_uniques, f)
+        st.success('保存成功，已生成相关文件。')
 
 
 
@@ -1053,7 +1052,7 @@ elif page == "预测分类页面":
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; font-size: 0.9rem;">
-    <p>© 2025 个人网页制作演示 | CPU180 版本号：0.6.16.6</p>
+    <p>© 2025 个人网页制作演示 | CPU180 版本号：0.6.16.5</p>
 </div>
 """, unsafe_allow_html=True)
 ###=====================================================================
