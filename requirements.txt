@@ -1,8 +1,9 @@
 # 核心依赖
 streamlit==1.45.1
-pandas==2.1.4
-scikit-learn==1.4.0
-numpy==1.26.0  # 最后一个稳定的 1.x 版本
+pandas==2.2.2  # 明确支持 Python 3.13 的版本
+scikit-learn==1.5.0  # 必须与 pandas 2.2.2 兼容
+numpy==2.0.0  # pandas 2.2.2 的官方推荐版本
+Pillow>=10.0.0
 setuptools>=70.0.0
 
 # 必要工具库
