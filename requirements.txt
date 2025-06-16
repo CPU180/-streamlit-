@@ -1,9 +1,9 @@
 # 核心依赖
 streamlit==1.45.1
-pandas==2.3.0
+pandas==2.1.4
 scikit-learn==1.4.0
-numpy==1.24.4  # 降级到 1.x 以兼容 scikit-learn
-Pillow==11.2.1  # 图片处理
+numpy==1.26.0  # 最后一个稳定的 1.x 版本
+setuptools>=70.0.0
 
 # 必要工具库
 setuptools>=60.0.0
