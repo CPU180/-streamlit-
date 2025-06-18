@@ -682,8 +682,8 @@ if page == "附近美食":
         TENCENT_API_KEY = "7QTBZ-NDMLM-GAQ6N-6YN54-XVWL2-5WFQS"
 
         st.title("🍜 南宁餐厅地图（腾讯卫星图）")
-        
-        
+    
+        # 显示原始数据前几行
         
         # 列名重命名
         restaurants = restaurants.rename(columns={
