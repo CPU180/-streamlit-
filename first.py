@@ -674,6 +674,46 @@ if page == "附近美食":
         df.index = pd.RangeIndex(start=1, stop=13, name='序号')  # 更规范的设置索引方式
         st.line_chart(df, x='月份')
 
+
+
+
+
+    with tab3:
+        import streamlit.components.v1 as components
+        
+        TENCENT_API_KEY = "你的密钥"
+        
+        # 极简测试页面
+        test_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <body>
+            <div id="map" style="width:100%;height:500px;"></div>
+            <script>
+                console.log("开始加载腾讯地图");
+                var script = document.createElement('script');
+                script.src = 'https://map.qq.com/api/gljs?v=2.exp&key={TENCENT_API_KEY}';
+                script.onload = function() {{
+                    console.log("地图API加载成功");
+                    new TMap.Map(document.getElementById('map'), {{
+                        center: new TMap.LatLng(39.98412, 116.307484),
+                        zoom: 11
+                    }});
+                }};
+                script.onerror = function() {{
+                    console.error("地图API加载失败");
+                    document.getElementById('map').innerText = "加载失败，请检查控制台";
+                }};
+                document.head.appendChild(script);
+            </script>
+        </body>
+        </html>
+        """
+        
+        components.html(test_html, height=550)
+
+    '''
+    
     with tab3:    
         import pydeck as pdk
         import streamlit.components.v1 as components  # 确保这行在最前面
@@ -826,6 +866,8 @@ if page == "附近美食":
         
         # 显示地图
         components.html(map_html, height=600)
+
+        '''
         ###----------------腾讯地图模块-----------------------
 
 
