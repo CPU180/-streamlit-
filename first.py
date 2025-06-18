@@ -2,7 +2,7 @@ import streamlit as st # 导入Streamlit并用st代表它
 import numpy as np #导入numpy库调用表格内容
 import pandas as pd #导入pandas库调用表格内容
 ###---------------------------------------------------------
-### 当前版本号0.6.16.5
+### 当前内部版本号0.6.18.1
 ### 注释说明，###为分割线及特殊注释，#为普通注释，###>>>>>为数据添加处
 ###---------------------------------------------------------
 
@@ -10,7 +10,7 @@ import pandas as pd #导入pandas库调用表格内容
 
 ###----------------------------------------------------------------------------------
 ###  主模块
-###  网页上方页面设置，侧边栏选项卡设置（待完善）
+###  网页上方页面设置，侧边栏选项卡设置
 ###----------------------------------------------------------------------------------
 
 # 必须作为第一个Streamlit命令！
@@ -20,13 +20,94 @@ st.set_page_config(
     layout="wide"
 )
 
+# 侧边栏美化 - 宽松版
+with st.sidebar:
+    # 添加自定义CSS样式
+    st.markdown("""
+    <style>
+        /* 侧边栏整体样式 - 增加内边距 */
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #f5f7fa 0%, #e4e8f0 100%);
+            border-right: 1px solid #d1d5db;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 2rem 1.5rem !important;
+        }
+        
+        /* 标题样式 - 增加下边距 */
+        .sidebar-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;  /* 从1rem增加到2rem */
+            text-align: center;
+            padding-bottom: 15px;  /* 从10px增加到15px */
+            border-bottom: 2px solid #4a6fa5;
+        }
+        
+        /* 单选按钮样式 - 大幅增加间距 */
+        .stRadio [role="radiogroup"] {
+            gap: 1rem !important;  /* 从0.5rem增加到1rem */
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 单选按钮本身加大 */
+        .stRadio [role="radio"] {
+            padding: 0.75rem 1.25rem !important;  /* 加大内边距 */
+            border-radius: 10px !important;  /* 更大的圆角 */
+            border: 1px solid #d1d5db;
+            transition: all 0.3s;
+            margin: 0.5rem 0 !important;  /* 上下增加外边距 */
+            font-size: 1rem !important;
+        }
+        
+        /* 悬停效果保持不变 */
+        .stRadio [role="radio"]:hover {
+            background-color: #f0f4f8;
+            border-color: #4a6fa5;
+        }
+        
+        /* 选中状态保持不变 */
+        .stRadio [role="radio"][aria-checked="true"] {
+            background-color: #4a6fa5 !important;
+            color: white !important;
+            border-color: #4a6fa5 !important;
+        }
+        
+        /* 分割线上下增加间距 */
+        [data-testid="stHorizontalBlock"] hr {
+            margin: 1.5rem 0 !important;
+        }
+        
+        /* 快速导航标题增加间距 */
+        .sidebar-section-title {
+            margin: 1.5rem 0 1rem 0 !important;
+        }
+        
+        /* 版本信息增加上边距 */
+        .version-info {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 3rem !important;  /* 从2rem增加到3rem */
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
-#侧边选项卡
-page = st.sidebar.radio("选择页面", ["首页", "员工档案", "园内一瞥","附近美食", "招聘个人信息简历投稿", "企鹅分类"])
-
-
-
-
+    # 侧边栏标题
+    st.markdown('<div class="sidebar-title">🦁 南宁动物园导航</div>', unsafe_allow_html=True)
+    
+    # 页面选择器 - 现在选项间距更大
+    page = st.radio(
+        "选择您想访问的页面",
+        ["首页", "员工档案", "园内一瞥", "附近美食", "招聘个人信息简历投稿", "企鹅分类"],
+        index=0,
+        label_visibility="collapsed"
+    )
+    
+       
 
 
 ###----------------------------------------------------------------------------------
@@ -35,135 +116,201 @@ page = st.sidebar.radio("选择页面", ["首页", "员工档案", "园内一瞥
 ###----------------------------------------------------------------------------------
 
 if page == "首页":
-    st.title("南宁动物园：城市绿洲中的自然奇趣王国")
-    tab1, tab2, tab3 = st.tabs(["门口一览", "五香胡", "熊猫馆"])
+    # 添加自定义CSS样式
+    st.markdown("""
+    <style>
+        /* 主标题样式 */
+        .main-title {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            background: linear-gradient(90deg, #4a6fa5, #3a86ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* 标签页样式 */
+        .stTabs [role="tablist"] {
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stTabs [role="tab"] {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px 12px 0 0;
+            background-color: #f0f4f8;
+            border: 1px solid #d1d5db;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .stTabs [role="tab"]:hover {
+            background-color: #e2e8f0;
+            color: #2d3748;
+        }
+        
+        .stTabs [role="tab"][aria-selected="true"] {
+            background-color: #4a6fa5;
+            color: white !important;
+            border-color: #4a6fa5;
+        }
+        
+        /* 图片容器样式 */
+        .image-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        /* 文本内容样式 */
+        .content-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #4a5568;
+            text-align: justify;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # 主标题
+    st.markdown('<div class="main-title">南宁动物园：城市绿洲中的自然奇趣王国</div>', unsafe_allow_html=True)
+    
+    # 创建标签页
+    tab1, tab2= st.tabs(["🦁 动物园简介", "🦁 动物介绍"])
 
     with tab1:
-        
-        images=['https://n.sinaimg.cn/sinacn10/90/w1000h690/20180831/d4e3-hinpmnq5016932.jpg']
-        st.image(images)
+        st.markdown('<div class="image-container">', unsafe_allow_html=True)
+        images = ['https://n.sinaimg.cn/sinacn10/90/w1000h690/20180831/d4e3-hinpmnq5016932.jpg']
+        st.image(images, width=400)  # 设置固定宽度为400像素
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="content-text">
+        南宁动物园，全称南宁市动物园，位于广西壮族自治区首府南宁市西乡塘区大学东路73号，是一座集动物保护、科普教育、休闲娱乐、科研繁育于一体的综合性城市动物园。作为国家4A级旅游景区和全国科普教育基地，它不仅承载着野生动物迁地保护的重要职能，更是南宁市民亲子游玩、亲近自然的首选目的地。以下从历史沿革、园区布局、特色展区、科普功能、服务设施及游览建议等方面，为您展开详细介绍。
+
+        <h3 style="color:#2c3e50;margin-top:1.5rem;">一、历史沿革：从植物园到现代化动物园</h3>
+        南宁动物园的前身可追溯至1973年成立的南宁市植物园，1975年正式转型为动物园并向公众开放。经过近50年的发展，园区从最初的简单笼舍逐步升级为现代化生态展区：
+
+        <ul style="margin-left:1.5rem;">
+            <li><strong>20世纪80年代：</strong>引入大熊猫、亚洲象等珍稀动物，成为广西首个大型动物园。</li>
+            <li><strong>2005年：</strong>完成首次大规模改造，新增热带雨林馆、海豚馆等特色展区。</li>
+            <li><strong>2010年至今：</strong>持续优化动物福利，推行"沉浸式展区"设计，如仿自然生态的"熊猫苑""长臂猿岛"等。</li>
+        </ul>
+
+        如今，南宁动物园占地约42公顷，饲养动物超250种、数量逾3000只（头），年接待游客量突破200万人次。
+
+        <h3 style="color:#2c3e50;margin-top:1.5rem;">二、园区布局：四大主题区域</h3>
+        动物园按功能划分为动物展区、游乐区、科普区、休闲服务区，游客可沿导览图有序参观。
+
+        <h4 style="color:#4a6fa5;margin-top:1rem;">1. 动物展区</h4>
+        <strong>珍稀动物馆</strong>
+        <ul style="margin-left:1.5rem;">
+            <li><strong>大熊猫苑：</strong>居住着来自四川的国宝大熊猫，场馆模拟高山竹林环境，配备空调和专属保育团队。</li>
+            <li><strong>亚洲象园：</strong>东南亚风格场馆，游客可观看大象洗澡、喷水等自然行为展示。</li>
+            <li><strong>灵长类动物区：</strong>包括金丝猴、长臂猿、黑猩猩等，设有攀爬架和树冠走廊。</li>
+        </ul>
+
+        <h4 style="color:#4a6fa5;margin-top:1rem;">2. 加勒比水上世界（季节性开放）</h4>
+        南宁动物园的招牌游乐项目，占地3万平方米，包含：
+        <ul style="margin-left:1.5rem;">
+            <li><strong>超级造浪池：</strong>人工海浪体验。</li>
+            <li><strong>彩虹滑道：</strong>6条并列滑道，适合亲子互动。</li>
+            <li><strong>儿童水寨：</strong>迷你滑梯和喷水设施。</li>
+        </ul>
+
+        <h3 style="color:#2c3e50;margin-top:1.5rem;">三、明星动物与特色体验</h3>
+        <h4 style="color:#4a6fa5;margin-top:1rem;">1. 不容错过的"动物明星"</h4>
+        <ul style="margin-left:1.5rem;">
+            <li><strong>"明明"和"阳阳"：</strong>两只大熊猫，以憨态可掬的吃竹姿势圈粉无数。</li>
+            <li><strong>亚洲象"波波"：</strong>擅长用鼻子卷起游客投喂的水果（需在饲养员指导下进行）。</li>
+            <li><strong>白虎"雷霆"：</strong>罕见的白化孟加拉虎，威严与美丽并存。</li>
+        </ul>
+
+        <h3 style="color:#2c3e50;margin-top:1.5rem;">四、实用游览信息</h3>
+        <h4 style="color:#4a6fa5;margin-top:1rem;">1. 门票与开放时间</h4>
+        <ul style="margin-left:1.5rem;">
+            <li><strong>门票：</strong>成人50元，儿童/学生/老人25元（需证件）。</li>
+            <li><strong>加勒比水世界：</strong>夏季单独售票，约100元/人。</li>
+            <li><strong>开放时间：</strong>旺季（4-10月）7:30-17:30，淡季（11-3月）8:00-17:00。</li>
+        </ul>
+
+        <h4 style="color:#4a6fa5;margin-top:1rem;">2. 交通指南</h4>
+        <ul style="margin-left:1.5rem;">
+            <li><strong>地铁：</strong>1号线"动物园站"C出口直达。</li>
+            <li><strong>公交：</strong>4路、33路、604路等至"动物园站"。</li>
+            <li><strong>自驾：</strong>停车场收费5元/小时，周末建议早到。</li>
+        </ul>
+
+        <h3 style="color:#2c3e50;margin-top:1.5rem;">结语：人与自然和谐共处的典范</h3>
+        南宁动物园通过科学的场馆设计、丰富的互动项目和扎实的保育工作，让游客在欢乐中感受生命之美。无论是家庭出游、科普学习，还是摄影爱好者的创作，这里都能满足您的期待。计划行程前，建议关注官方公众号获取最新活动资讯，让您的游览更加充实！ 🦁🐼🌿
+        </div>
+        """, unsafe_allow_html=True)
+
 
     with tab2:
-        images=['https://qcloud.dpfile.com/pc/W4kkyyVqV3Ja6kh8a4qZ0i6BN58AzN-9zJ6onbaIrVfM_zlUQkigoY3vIRTvq8gJ.jpg']
-        st.image(images)
+            # 在内存中初始化一个ind,当内存中没有'ind'的时候，才初始化
+                if 'ind' not in st.session_state:
+                    st.session_state['ind'] = 0
 
-    with tab3:
-       images=['https://b0.bdstatic.com/20dfdc462bfeef2c9f379482134cfe73.jpg']
-       st.image(images)
+                # 图片数组-装很多的图片
 
+                image_obj = [{
+                        'url': 'https://szyl.nanning.gov.cn/nnsdwy/jdjs/dwzs/W020220811629523676964.jpg',
+                        'title': '长颈鹿',
+                        '介绍':'生活于非洲，拉丁文名字的意思是“长着豹纹的骆驼”。它们是世界上现存最高的陆生动物，我园最高的一头长颈鹿身高达到6米。长颈鹿脾气温柔，喜欢吃鲜嫩多汁的树叶，每天采食量可以达到40公斤。'
+                    }, {
+                        'url': 'https://szyl.nanning.gov.cn/nnsdwy/jdjs/dwzs/W020220811629861553625.jpg',
+                        'title': '金刚鹦鹉',
+                        '介绍':'金刚鹦鹉原产于美洲热带地区，是体型最大、色彩最艳丽的鹦鹉，属大型攀禽，共有6属17个品种。目前园内驯养有蓝黄金刚鹦鹉与红绿金刚鹦鹉两种，是全园最为聒噪也是最为美丽的鸟类。'
+                    }, {
+                        'url': 'https://szyl.nanning.gov.cn/nnsdwy/jdjs/dwzs/W020220811629926516316.jpg',
+                        'title': '棕熊',
+                        '介绍':'棕熊（学名：Ursus arctos）是熊科熊属的大型哺乳动物，广泛分布于北半球的森林和山地地区，是陆地上体型最大的食肉目动物之一善于游泳，主要分布：北美洲（如阿拉斯加灰熊）、欧洲、亚洲（如西伯利亚、中国东北）'
+                    },{
+                        'url': 'https://szyl.nanning.gov.cn/nnsdwy/jdjs/dwzs/W020220811630006982402.JPG',
+                        'title': '非洲狮',
+                        '介绍':'现存非洲最大的猫科动物，是非洲最凶猛的野兽，素有“草原之王..'
+                    }]
+                a1,a2=st.columns(2)
+                with a1:
+                     st.image(image_obj[st.session_state['ind']]['url'],width=600)
+                with a2:
+                    st.title(image_obj[st.session_state['ind']]['title'])
+                    st.text(image_obj[st.session_state['ind']]['介绍'])
+               
 
-    st.text("""
-南宁动物园，全称南宁市动物园，位于广西壮族自治区首府南宁市西乡塘区大学东路73号，是一座集动物保护、科普教育、休闲娱乐、科研繁育于一体的综合性城市动物园。作为国家4A级旅游景区和全国科普教育基地，它不仅承载着野生动物迁地保护的重要职能，更是南宁市民亲子游玩、亲近自然的首选目的地。以下从历史沿革、园区布局、特色展区、科普功能、服务设施及游览建议等方面，为您展开详细介绍。
+                # 显示按钮
 
-一、历史沿革：从植物园到现代化动物园
-南宁动物园的前身可追溯至1973年成立的南宁市植物园，1975年正式转型为动物园并向公众开放。经过近50年的发展，园区从最初的简单笼舍逐步升级为现代化生态展区：
-
-20世纪80年代：引入大熊猫、亚洲象等珍稀动物，成为广西首个大型动物园。
-
-2005年：完成首次大规模改造，新增热带雨林馆、海豚馆等特色展区。
-
-2010年至今：持续优化动物福利，推行“沉浸式展区”设计，如仿自然生态的“熊猫苑”“长臂猿岛”等。
-
-如今，南宁动物园占地约42公顷，饲养动物超250种、数量逾3000只（头），年接待游客量突破200万人次。
-
-二、园区布局：四大主题区域
-动物园按功能划分为动物展区、游乐区、科普区、休闲服务区，游客可沿导览图有序参观。
-
-1. 动物展区
-珍稀动物馆
-
-大熊猫苑：居住着来自四川的国宝大熊猫，场馆模拟高山竹林环境，配备空调和专属保育团队。
-
-亚洲象园：东南亚风格场馆，游客可观看大象洗澡、喷水等自然行为展示。
-
-灵长类动物区：包括金丝猴、长臂猿、黑猩猩等，设有攀爬架和树冠走廊。
-
-猛兽谷
-白虎、非洲狮、东北虎等生活在仿原生态的山谷中，通过玻璃幕墙安全观赏。
-
-鸟语林
-开放式天网内放养孔雀、火烈鸟、犀鸟等，可近距离观察鸟类飞翔。
-
-两栖爬行馆
-展出缅甸蟒、鳄龟、变色龙等，配有温湿度控制系统。
-
-2. 加勒比水上世界（季节性开放）
-南宁动物园的招牌游乐项目，占地3万平方米，包含：
-
-超级造浪池：人工海浪体验。
-
-彩虹滑道：6条并列滑道，适合亲子互动。
-
-儿童水寨：迷你滑梯和喷水设施。
-
-3. 科普教育区
-动物科普馆：通过标本、AR互动屏幕展示生物多样性。
-
-志愿者讲解站：节假日提供免费导览，适合学生团体。
-
-4. 休闲服务区
-餐饮：园区内设快餐店、咖啡厅，提供广西特色小吃如老友粉、五色糯米饭。
-
-纪念品商店：出售动物玩偶、文创产品。
-
-三、明星动物与特色体验
-1. 不容错过的“动物明星”
-“明明”和“阳阳”：两只大熊猫，以憨态可掬的吃竹姿势圈粉无数。
-
-亚洲象“波波”：擅长用鼻子卷起游客投喂的水果（需在饲养员指导下进行）。
-
-白虎“雷霆”：罕见的白化孟加拉虎，威严与美丽并存。
-
-2. 特色互动项目
-动物投喂：
-
-长颈鹿投喂（10元/次，提供专用树叶）。
-
-环尾狐猴岛（可进入展区与温顺的狐猴互动）。
-
-行为展示：
-
-海狮表演（每日11:00、15:00两场）。
-
-大象趣味运动会（踢足球、吹口琴等）。
-
-四、科普保护：不止于观赏
-南宁动物园积极参与全球濒危物种保护计划（如华南虎繁育），并开展多项公众教育活动：
-
-研学课程：针对中小学生设计“夜探动物园”“动物保育员体验”等活动。
-
-公益宣传：设立“拒绝动物表演”“抵制非法野生动物贸易”展板。
-
-五、实用游览信息
-1. 门票与开放时间
-门票：成人50元，儿童/学生/老人25元（需证件）。
-
-加勒比水世界：夏季单独售票，约100元/人。
-
-开放时间：
-
-旺季（4-10月）7:30-17:30，淡季（11-3月）8:00-17:00。
-
-2. 交通指南
-地铁：1号线“动物园站”C出口直达。
-
-公交：4路、33路、604路等至“动物园站”。
-
-自驾：停车场收费5元/小时，周末建议早到。
-
-3. 游览贴士
-最佳时段：上午动物较活跃，避开正午高温。
-
-必备物品：防晒帽、驱蚊液、舒适运动鞋。
-
-禁忌：勿拍打玻璃、勿投喂自带食物。
-
-结语：人与自然和谐共处的典范
-南宁动物园通过科学的场馆设计、丰富的互动项目和扎实的保育工作，让游客在欢乐中感受生命之美。无论是家庭出游、科普学习，还是摄影爱好者的创作，这里都能满足您的期待。计划行程前，建议关注官方公众号获取最新活动资讯，让您的游览更加充实！ 🦁🐼🌿""")
+                def nextImg():
+                    # 点击下一张按钮要做的事
+                    st.session_state['ind'] = (st.session_state['ind'] + 1) % len(image_obj)
 
 
+                def lastImg():
+                    # 点击上一张按钮要做的事
+                    st.session_state['ind'] = (st.session_state['ind'] - 1) % len(image_obj)
 
+                c1, c2 = st.columns(2)
 
+                with c1:
+                    st.button('上一张',on_click=lastImg, use_container_width=True)
+
+                with c2:
+                    st.button('下一张', on_click=nextImg, use_container_width=True)
+       
+
+    
 
 ###----------------------------------------------------------------------------------
 ###  模块②
@@ -171,138 +318,151 @@ if page == "首页":
 ###----------------------------------------------------------------------------------
 
 
-
-    
 if page == "员工档案":
-    st.markdown('# 员工档案——芙蓉王源😇')
-
-    st.markdown('# 😃基本信息')
-
-    st.markdown('''# 姓名: *芙蓉王源😁*
-    #### 班级: *23级练习生一班😉*
-    #### 学号: *9527😇*''')
-
-
-    # 创建一个为基本信息的标题，并指定锚点为基本信息
-    st.header('兴趣:smiley:', anchor='text!')
-    st.markdown('### :red[游戏] 🎮, :blue[游泳]🏊︎ ,:orange[唱跳]🎤 , :green[篮球]🏀')
-
-    #调用指标类展示元素metric
-    st.subheader('')
-    st.metric(label="当前学期", value="大二 下学期")
-    st.subheader('学习情况')
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric(label="当前周数", value="15/20", delta="剩余5周")
-    c2.metric(label="四六级进度", value="1/2", delta="已过四级")
-    c3.metric(label="人生进度", value="20/100", delta="未来可期")
-
-    #对于箭头的表示通过在内容前使用+或-进行展示
-    st.metric(label="-心情状态",value="心情状态",delta="愉悦",label_visibility='visible')
-
-    # Streamlit课程进度部分
-    st.header('Streamlit课程进度')
-    st.progress(0.2, text="Streamlit课程进度") # 此处设置参数为20%
-
-
-
-    data = {
-       '课程': ['高等数学', '大学英语', 'C语言程序设计'],
-       '期末达标分数': [90,101,97],
-       '状态': ['***通过***','***通过***','***补考***'], 
-       '难度': ['***中等***','***简单***','***困难***']
+    # 页面标题 - 使用更大的字体和居中
+    st.markdown("""
+    <style>
+    .big-title {
+        font-size: 36px !important;
+        text-align: center;
+        color: #FF4B4B;
+        padding: 10px;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #f8ff00 0%, #3ad59f 100%);
+        margin-bottom: 30px;
     }
-
-    ###-------------------------------------------
-    # 字体样式提示
-    #st.markdown('*斜体文本*')
-    #st.markdown(' 斜体文本 ')
-    #st.markdown('**斜体文本**')
-    #st.markdown('_*斜体文本 ')
-    #st.markdown('**斜体文本***')
-    #st.markdown('_* 斜体文本 ')
-    ###-------------------------------------------
-
-    index = pd.Series(['1','2','3'], name='') 
-    # 根据上面创建的data和index，创建数据框 
-    df = pd.DataFrame(data, index=index) 
-
-    st.subheader('课程日志')
-    st.table(df)
-    #使用datatrame可以增加用户对数据的处理，此处使用table表示仅进行展示
-
-    # 创建一个代码块，用于展示python_code的内容
-    # line_numbers=True 表示显示代码行数
-    # language为None，即该代码块无法满足高亮
-    st.subheader('Python代码展示')
-    python_code = '''def hello():
-        print('你好，Streamlit！')'''
-
-    st.code(python_code, line_numbers=True)
-
-    st.subheader('java代码展示')
-    java_code = '''public class Hello {
-        public static void main(String[] args) {
-            System.out.println('你好！ Streamlit！');
-        }
-    }'''
-
-    st.code(java_code, language='java',line_numbers=True)
-
-    st.subheader('JavaScript代码展示')
-    javascript_code = '''<p id="demo"></p>
-    <script>
-        document.getElementById('demo').innerHTML ='你好！ Streamlit！';
-    </script>'''
-
-    st.code(javascript_code, language='javascript',line_numbers=True)
-
-
-
-if page =="园内一瞥":
-    st.markdown('<p class="main-title">图片展示模块</p>', unsafe_allow_html=True)
-
-
-
-    ###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    # 图片网址
-    images = ["https://wallpaperaccess.com/full/1414728.jpg",
-              "https://wallpaperaccess.com/full/1167990.jpg",
-              "https://wallpapercave.com/wp/D3r6gVH.jpg"]
-
-
-    ###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    st.subheader("一些风景图片")
-    st.image(images)
-
-
-
-    import streamlit as st
-
-
-    ###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-    # 读取音频URL
-    audio_file = 'https://music.163.com/song/media/outer/url?id=28263184.mp3'
-
-    ###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-    st.subheader('播放音频')
-    st.audio(audio_file)
-
-
-
-
-
-
-    ###-----------------视频播放器代码块--------------------------
-
-    import streamlit as st
-    from streamlit.components.v1 import html
-
-
-
-    # 自定义CSS样式
+    .section-title {
+        font-size: 24px !important;
+        color: #3ad59f;
+        border-bottom: 2px solid #3ad59f;
+        padding-bottom: 5px;
+    }
+    .metric-card {
+        border-radius: 10px;
+        padding: 15px;
+        background-color: #f0f2f6;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="big-title">员工档案 —— 芙蓉王源 😇</div>', unsafe_allow_html=True)
+    
+    # 基本信息部分 - 使用卡片布局
+    with st.container():
+        st.markdown('<div class="section-title">😃 基本信息</div>', unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            # 添加一个头像占位
+            st.image("https://img.icons8.com/color/96/000000/circled-user-male-skin-type-7.png", width=100)
+        
+        with col2:
+            st.markdown("""
+            <div style="font-size: 18px; line-height: 2;">
+            <b>姓名:</b> <span style="color: #FF4B4B;">芙蓉王源 😁</span><br>
+            <b>班级:</b> <span style="color: #3ad59f;">23级练习生一班 😉</span><br>
+            <b>学号:</b> <span style="color: #6a5acd;">9527 😇</span>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # 兴趣部分 - 使用标签样式
+    st.markdown('<div class="section-title">兴趣爱好</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+        <span style="background-color: #FF4B4B; color: white; padding: 5px 15px; border-radius: 20px;">🎮 游戏</span>
+        <span style="background-color: #3ad59f; color: white; padding: 5px 15px; border-radius: 20px;">🏊 游泳</span>
+        <span style="background-color: #FFA500; color: white; padding: 5px 15px; border-radius: 20px;">🎤 唱跳</span>
+        <span style="background-color: #6a5acd; color: white; padding: 5px 15px; border-radius: 20px;">🏀 篮球</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 指标卡片 - 使用更美观的布局
+    st.markdown('<div class="section-title">学习指标</div>', unsafe_allow_html=True)
+    
+    with st.container():
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric(label="当前学期", value="大二 下学期", delta="稳定进步中 ↑")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        cols = st.columns(3)
+        with cols[0]:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric(label="当前周数", value="15/20", delta="-5周")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with cols[1]:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric(label="四六级进度", value="1/2", delta="已过四级")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with cols[2]:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric(label="人生进度", value="20%", delta="未来可期 ↑")
+            st.markdown('</div>', unsafe_allow_html=True)
+    
+    # 心情状态 - 使用表情符号和颜色
+    st.markdown('<div class="section-title">心情状态</div>', unsafe_allow_html=True)
+    mood = st.select_slider(
+        "当前心情",
+        options=["😭 糟糕", "😞 难过", "😐 一般", "🙂 不错", "😁 很棒"],
+        value="😁 很棒"
+    )
+    st.markdown(f'<div style="text-align: center; font-size: 24px;">{mood}</div>', unsafe_allow_html=True)
+    
+    # 课程进度 - 使用更美观的进度条
+    st.markdown('<div class="section-title">Streamlit课程进度</div>', unsafe_allow_html=True)
+    progress = st.slider("进度百分比", 0, 100, 20)
+    st.progress(progress, text=f"已完成 {progress}%")
+    
+    # 课程日志 - 使用更美观的表格
+    st.markdown('<div class="section-title">课程日志</div>', unsafe_allow_html=True)
+    
+    data = {
+        '课程': ['高等数学', '大学英语', 'C语言程序设计'],
+        '期末达标分数': [90, 101, 97],
+        '状态': ['通过', '通过', '补考'], 
+        '难度': ['中等', '简单', '困难']
+    }
+    
+    df = pd.DataFrame(data)
+    
+    # 使用st.dataframe并添加样式
+    st.dataframe(
+        df.style
+        .applymap(lambda x: 'color: green' if x == '通过' else 'color: red' if x == '补考' else '')
+        .applymap(lambda x: 'color: orange' if x == '困难' else 'color: #3ad59f' if x == '简单' else ''),
+        height=150
+    )
+    
+    # 代码展示 - 使用标签页组织
+    st.markdown('<div class="section-title">代码展示</div>', unsafe_allow_html=True)
+    
+    tab1, tab2, tab3 = st.tabs(["Python", "Java", "JavaScript"])
+    
+    with tab1:
+        python_code = '''def hello():
+    print('你好，Streamlit！')'''
+        st.code(python_code, language='python', line_numbers=True)
+    
+    with tab2:
+        java_code = '''public class Hello {
+    public static void main(String[] args) {
+        System.out.println("你好！ Streamlit！");
+    }
+}'''
+        st.code(java_code, language='java', line_numbers=True)
+    
+    with tab3:
+        javascript_code = '''<p id="demo"></p>
+<script>
+    document.getElementById('demo').innerHTML = '你好！ Streamlit！';
+</script>'''
+        st.code(javascript_code, language='javascript', line_numbers=True)
+        
+if page == "园内一瞥":
+    # 全局CSS样式
     st.markdown("""
     <style>
         /* 主标题样式 */
@@ -310,138 +470,155 @@ if page =="园内一瞥":
             font-size: 2.5rem;
             text-align: center;
             color: #00a1d6;
-            margin-bottom: 1.5rem;
+            margin: 1.5rem 0;
             font-weight: bold;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            background: linear-gradient(90deg, #00a1d6, #3a86ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        /* 自定义按钮样式 */
-        .custom-btn {
-            background-color: white !important;
-            color: black !important;
-            border: 2px solid #ff4b4b !important;
-            border-radius: 8px !important;
-            padding: 0.5rem 1rem !important;
-            font-weight: bold !important;
-            transition: all 0.3s !important;
-            width: 100% !important;
-        }
-        .custom-btn:hover {
-            background-color: #fff0f0 !important;
-            transform: scale(1.05) !important;
+        /* 副标题样式 */
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 1.2rem 0 0.8rem;
+            border-left: 4px solid #00a1d6;
+            padding-left: 0.8rem;
         }
         
-        /* 视频容器样式 */
-        .video-container {
+        /* 图片画廊样式 */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .image-gallery img {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            width: 100%;
+            height: auto;
+        }
+        .image-gallery img:hover {
+            transform: scale(1.02);
+        }
+        
+        /* 媒体播放器样式 */
+        .media-player {
+            background: #f8f9fa;
             border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
-        /* 当前播放信息样式 */
-        .current-playing {
-            font-size: 1.1rem;
-            text-align: center;
-            padding: 0.5rem;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            margin-top: 1rem;
+        /* 按钮样式 */
+        .stButton>button {
+            border: 2px solid #00a1d6;
+            color: #00a1d6;
+            background: white;
+            transition: all 0.3s;
+        }
+        .stButton>button:hover {
+            background: #e6f7ff;
+            color: #0084b4;
+            border-color: #0084b4;
         }
     </style>
     """, unsafe_allow_html=True)
 
-    # 美化后的主标题
-    st.markdown('<p class="main-title">🎬 B站视频播放器</p>', unsafe_allow_html=True)
+    # 图片展示模块
+    st.markdown('<p class="main-title">园内精彩瞬间</p>', unsafe_allow_html=True)
+    
+    with st.expander("📸 风景图片集", expanded=True):
+        images = [
+            "https://wallpaperaccess.com/full/1414728.jpg",
+            "https://wallpaperaccess.com/full/1167990.jpg",
+            "https://wallpapercave.com/wp/D3r6gVH.jpg"
+        ]
+        
+        # 使用columns创建响应式图片布局
+        cols = st.columns(3)
+        for idx, img in enumerate(images):
+            with cols[idx % 3]:
+                st.image(img, use_container_width=True, caption=f"风景图片 {idx+1}")
 
-    ###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    # B站视频数据
+    # 音频播放模块
+    with st.expander("🎵 背景音乐", expanded=True):
+        audio_files = {
+            "轻音乐1": "https://music.163.com/song/media/outer/url?id=28263184.mp3",
+            "轻音乐2": "https://music.163.com/song/media/outer/url?id=1359356908.mp3",
+            
+        }
+        
+        selected_audio = st.selectbox("选择音频", options=list(audio_files.keys()))
+        st.audio(audio_files[selected_audio])
+
+    # 视频播放模块
+    st.markdown('<p class="main-title">精彩视频展播</p>', unsafe_allow_html=True)
+    
     video_data = {
-        "视频1 - 高山风景视频": "BV1ST411E7wb",  
-        "视频2 - 这大概就是美到窒息的感觉吧": "BV13A4y1Z7m2",
-        "视频3 - 仿佛来到了童话里的世界~": "BV1co7Bz6Ehp",
-        "视频4 - 日落后的二十分钟，被称为蓝调时刻": "BV1gLB4YwEXH",  
-        "视频5 - 久在樊笼里，复得返自然": "BV1exrdYZEfM",
-        "视频6 - 这是地理课本里的峡湾地貌 也是我国唯一没有的地貌": "BV1d9f4YoEwV"
+        "高山风景视频": "BV1ST411E7wb",  
+        "美到窒息的感觉": "BV13A4y1Z7m2",
+        "童话世界": "BV1co7Bz6Ehp",
+        "蓝调时刻": "BV1gLB4YwEXH",  
+        "自然风光": "BV1exrdYZEfM",
+        "峡湾地貌": "BV1d9f4YoEwV"
     }
 
-    ###>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    # 初始化session_state
+    if "current_video_index" not in st.session_state:
+        st.session_state.current_video_index = 0
 
+    # 视频选择器
+    selected_video = st.selectbox(
+        "选择视频",
+        options=list(video_data.keys()),
+        index=st.session_state.current_video_index
+    )
 
-    # 获取视频列表和当前索引
-    video_list = list(video_data.values())
-    current_index = st.session_state.get("current_index", 0)
-
-    # 处理导航按钮点击
-    def navigate(direction):
-        if direction == "prev":
-            st.session_state.current_index = (current_index - 1) % len(video_list)
-        elif direction == "next":
-            st.session_state.current_index = (current_index + 1) % len(video_list)
-        st.session_state.current_video = video_list[st.session_state.current_index]
+    # 更新当前视频索引
+    current_index = list(video_data.keys()).index(selected_video)
+    if current_index != st.session_state.current_video_index:
+        st.session_state.current_video_index = current_index
         st.rerun()
 
-    # 获取当前BV号
-    current_bv = st.session_state.get("current_video", video_list[current_index])
-
-    # 创建容器放置视频和按钮
+    # 视频播放器
     with st.container():
-        # 视频选择下拉菜单
-        selected_title = st.selectbox(
-            "选择视频",
-            options=list(video_data.keys()),
-            index=current_index,
-            key="video_selector"
-        )
-        
-        # 如果下拉菜单选择变化，更新当前视频
-        if selected_title != list(video_data.keys())[current_index]:
-            st.session_state.current_index = list(video_data.keys()).index(selected_title)
-            st.session_state.current_video = video_data[selected_title]
-            st.rerun()
-        
-        # B站播放器HTML模板
-        st.markdown('<div class="video-container">', unsafe_allow_html=True)
-        bili_player = f"""
-        <div style="margin:10px 0">
+        st.markdown("""
+        <div style="margin:1rem 0; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
             <iframe 
                 width="100%" 
                 height="500" 
-                src="//player.bilibili.com/player.html?bvid={current_bv}&page=1&high_quality=1&volume=0.3" 
+                src="//player.bilibili.com/player.html?bvid={}&page=1&high_quality=1&autoplay=0" 
                 scrolling="no" 
                 frameborder="no" 
                 allowfullscreen="true">
             </iframe>
         </div>
-        """
-        html(bili_player, height=520)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # 创建导航按钮（优化后的样式和布局）
-        col1, col2, col3 = st.columns([1, 1, 4])  # 调整比例
+        """.format(video_data[selected_video]), unsafe_allow_html=True)
+
+        # 导航按钮
+        col1, col2, col3 = st.columns([1,1,6])
         with col1:
-            if st.button("◀ 上一个", key="prev_btn", help="播放上一个视频"):
-                navigate("prev")
+            if st.button("◀ 上一个"):
+                st.session_state.current_video_index = (st.session_state.current_video_index - 1) % len(video_data)
+                st.rerun()
         with col2:
-            if st.button("下一个 ▶", key="next_btn", help="播放下一个视频"):
-                navigate("next")
-        
-    # 显示当前视频标题
-    current_title = list(video_data.keys())[current_index]
-    st.markdown(f'🎥 **当前播放: {current_title}**')
+            if st.button("下一个 ▶"):
+                st.session_state.current_video_index = (st.session_state.current_video_index + 1) % len(video_data)
+                st.rerun()
 
-
-
-    ###-----------------视频播放器代码块--------------------------
-
-
-
+    # 当前播放信息
+    st.success(f"正在播放: {selected_video}")
 
 
 
 ###----------------------------------------------------------------------------------
 ###  模块③
-###  餐厅内容展示，包含数据，条形图，面积图，折线图，进阶地图（待完善）
+###  餐厅内容展示，包含数据，条形图，面积图，折线图，进阶地图
 ###----------------------------------------------------------------------------------
 
 
@@ -459,289 +636,197 @@ if page == "附近美食":
     "longitude": [108.324614,108.387910,108.262110,108.313493,108.326838,108.257296,108.310691,108.309224,108.267817,108.284216,108.332567,108.321484,108.312827,108.306724,108.339396,108.320656,108.315969,108.318908,108.370764,108.300288,108.343062,108.378891,108.368414]
     })
 
-    
+    tab1, tab2, tab3 = st.tabs(["门店数据详情", "门店数据可视化", "店铺分布"])
+    with tab1:
+        st.markdown('### 门店详细数据（仅展示评分大于4.5的店铺）')
 
-    st.markdown('### 门店详细数据（仅展示评分大于4.5的店铺）')
+        #仅展示评分大于4.5的店
+        high_rating = restaurants[restaurants["评分"] >= 4.5]
+        # 显示表格（可排序、搜索）
+        st.dataframe(high_rating[["餐厅名称", "类型", "评分", "人均消费(元)","营业时间"]])
 
-    #仅展示评分大于4.5的店
-    high_rating = restaurants[restaurants["评分"] >= 4.5]
-    # 显示表格（可排序、搜索）
-    st.dataframe(high_rating[["餐厅名称", "类型", "评分", "人均消费(元)","营业时间"]])
+    with tab2:
+        st.markdown("### 人均消费数据")
+        st.bar_chart(restaurants.set_index("餐厅名称")["人均消费(元)"])
+        st.markdown('### 门店评分数据（仅展示评分大于4.5的店铺）')
 
+        # 设置餐厅名称为索引（X轴）
+        data_for_chart = restaurants.set_index("餐厅名称")["评分"]
 
+        # 绘制面积图
+        st.area_chart(data_for_chart)
+        
 
+        # 绘制折线图
+        st.markdown('### 价格走势折线图')
 
-    st.markdown("### 人均消费数据")
+        data = {
+            '月份': ['一月', '二月', '三月', '四月', '五月', '六月', 
+                   '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            '书记老友粉': [15, 18, 14, 17, 19, 31, 22, 13, 17, 13, 11, 21],
+            '天福香老友粉': [18, 16, 21, 24, 45, 21, 12, 24, 26, 16, 18, 25],
+            '三品王牛肉粉': [23, 21, 34, 23, 25, 35, 53, 27, 21, 24, 32, 14],
+            '姜胖胖自助烤肉': [115, 145, 95, 122, 165, 116, 131, 151, 125, 99, 123, 156],
+            '乐观面屋(东盟店)': [27, 25, 34, 35, 21, 41, 12, 35, 23, 34, 28, 45]
+        }
 
-    st.bar_chart(restaurants.set_index("餐厅名称")["人均消费(元)"])
+        df = pd.DataFrame(data)
+        df.index = pd.RangeIndex(start=1, stop=13, name='序号')  # 更规范的设置索引方式
+        st.line_chart(df, x='月份')
 
+    with tab3:    
+        import pydeck as pdk
+        import streamlit.components.v1 as components  # 确保这行在最前面
+        
+        # API配置
+        TENCENT_API_KEY = "7QTBZ-NDMLM-GAQ6N-6YN54-XVWL2-5WFQS"
 
-    st.markdown('### 门店评分数据（仅展示评分大于4.5的店铺）')
+        st.title("🍜 南宁餐厅地图（腾讯卫星图）")
+        
+        
+        
+        # 列名重命名
+        restaurants = restaurants.rename(columns={
+            '餐厅名称': 'name',
+            '类型': 'category',
+            '评分': 'rating',
+            '人均消费(元)': 'price',
+            '营业时间': 'hours'
+            # latitude和longitude不需要重命名
+        })
+        
+        # 检查必要列
+        required_columns = ['name', 'latitude', 'longitude']
+        missing_cols = [col for col in required_columns if col not in restaurants.columns]
+        if missing_cols:
+            st.error(f"缺少必要列: {missing_cols}")
+            st.stop()
+        
+        # 确保经纬度是数值
+        restaurants['latitude'] = pd.to_numeric(restaurants['latitude'], errors='coerce')
+        restaurants['longitude'] = pd.to_numeric(restaurants['longitude'], errors='coerce')
+        
+        # 移除无效坐标
+        restaurants = restaurants.dropna(subset=['latitude', 'longitude'])
+        
+        
+        # 检查是否有有效数据
+        if restaurants.empty:
+            st.error("没有有效的餐厅数据可供显示！")
+            st.stop()
 
-    # 设置餐厅名称为索引（X轴）
-    data_for_chart = restaurants.set_index("餐厅名称")["评分"]
-
-    # 绘制面积图
-    st.area_chart(data_for_chart)
-
-    # 绘制折线图
-    st.markdown('### 价格走势折线图')
-
-    data = {
-        '月份': ['一月', '二月', '三月', '四月', '五月', '六月', 
-               '七月', '八月', '九月', '十月', '十一月', '十二月'],
-        '书记老友粉': [15, 18, 14, 17, 19, 31, 22, 13, 17, 13, 11, 21],
-        '天福香老友粉': [18, 16, 21, 24, 45, 21, 12, 24, 26, 16, 18, 25],
-        '三品王牛肉粉': [23, 21, 34, 23, 25, 35, 53, 27, 21, 24, 32, 14],
-        '姜胖胖自助烤肉': [115, 145, 95, 122, 165, 116, 131, 151, 125, 99, 123, 156],
-        '乐观面屋(东盟店)': [27, 25, 34, 35, 21, 41, 12, 35, 23, 34, 28, 45]
-    }
-
-    df = pd.DataFrame(data)
-    df.index = pd.RangeIndex(start=1, stop=13, name='序号')  # 更规范的设置索引方式
-
-    st.line_chart(df, x='月份')
-     
-
-    import pydeck as pdk
-
-
-    ###----------------腾讯地图模块(正在完善中)-----------------------
-    
-    ### 点击显示功能尚未实现
-
-
-    import streamlit.components.v1 as components
-
-
-    # API配置
-    TENCENT_API_KEY = "7QTBZ-NDMLM-GAQ6N-6YN54-XVWL2-5WFQS"
-
-
-
-
-    # 确保列名正确 - 直接使用数据中的实际列名
-    required_columns = {
-        'name': '餐厅名称',
-        'category': '类型',
-        'rating': '评分',
-        'price': '人均消费(元)',
-        'hours': '营业时间',
-        'latitude': 'latitude',
-        'longitude': 'longitude'
-    }
-
-    # 检查所有必要列是否存在
-    missing_cols = [col for col in required_columns.values() if col not in restaurants.columns]
-    if missing_cols:
-        st.error(f"数据中缺少必要列: {missing_cols}")
-        st.stop()
-
-    # 重命名列以匹配地图代码中的预期字段名
-    restaurants = restaurants.rename(columns={
-        '餐厅名称': 'name',
-        '类型': 'category',
-        '评分': 'rating',
-        '人均消费(元)': 'price',
-        '营业时间': 'hours'
-    })
-
-    # 确保经纬度是数值类型
-    restaurants['latitude'] = pd.to_numeric(restaurants['latitude'], errors='coerce')
-    restaurants['longitude'] = pd.to_numeric(restaurants['longitude'], errors='coerce')
-
-    # 移除无效坐标
-    restaurants = restaurants.dropna(subset=['latitude', 'longitude'])
-
-    # 显示处理后的数据供检查
-    #st.write("处理后的餐厅数据:", restaurants.head())
-
-    # 然后使用之前提供的地图HTML代码
-    # 注意确保TENCENT_API_KEY已正确设置
-
-    #地图参数设置（调用腾讯定位服务API）
-    map_html = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://map.qq.com/api/gljs?v=2.exp&key={TENCENT_API_KEY}"></script>
-        <style>
-            #map-container {{
-                width: 100%;
-                height: 500px;
-                margin: 0;
-                padding: 0;
-                position: relative;
-            }}
-            #map {{
-                width: 100%;
-                height: 100%;
-            }}
-            .info-window {{
-                min-width: 200px;
-                padding: 10px;
-                font-family: Arial, sans-serif;
-            }}
-            .info-window h3 {{
-                margin: 0 0 8px 0;
-                font-size: 16px;
-                color: #333;
-            }}
-            .info-window p {{
-                margin: 4px 0;
-                font-size: 14px;
-                color: #666;
-            }}
-            #loading {{
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255,255,255,0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-            }}
-        </style>
-    </head>
-    <body>
-        <div id="map-container">
-            <div id="loading">地图加载中...</div>
-            <div id="map"></div>
-        </div>
-        <script>
-            // 更健壮的数据处理
-            function processRestaurantData(data) {{
-                return data.map(restaurant => {{
-                    return {{
-                        id: restaurant.id || Math.random().toString(36).substr(2, 9),
-                        name: restaurant.name || '未知餐厅',
-                        category: restaurant.category || '未知类型',
-                        rating: restaurant.rating || '无评分',
-                        price: restaurant.price || '未知',
-                        hours: restaurant.hours || '未知',
-                        latitude: Number(restaurant.latitude),
-                        longitude: Number(restaurant.longitude)
-                    }};
-                }}).filter(restaurant => 
-                    !isNaN(restaurant.latitude) && 
-                    !isNaN(restaurant.longitude) &&
-                    Math.abs(restaurant.latitude) <= 90 &&
-                    Math.abs(restaurant.longitude) <= 180
-                );
-            }}
+        # 地图HTML代码
+        map_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <script src="https://map.qq.com/api/gljs?v=2.exp&key={TENCENT_API_KEY}"></script>
+            <style>
+                #map-container {{
+                    width: 100%;
+                    height: 500px;
+                }}
+                .info-window {{
+                    min-width: 200px;
+                    padding: 10px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div id="map-container">
+                <div id="map" style="width:100%;height:100%;"></div>
+                <div id="loading">地图加载中...</div>
+            </div>
             
-            // 初始化地图
-            function initMap() {{
-                try {{
-                    // 隐藏加载提示
-                    document.getElementById('loading').style.display = 'none';
-                    
-                    // 处理数据
-                    var rawData = {restaurants.to_json(orient='records', force_ascii=False)};
-                    var restaurantData = processRestaurantData(rawData);
-                    
-                    if (restaurantData.length === 0) {{
-                        throw new Error('没有有效的餐厅位置数据');
+            <script>
+                function initMap() {{
+                    try {{
+                        document.getElementById('loading').style.display = 'none';
+                        
+                        var restaurantData = {restaurants.to_json(orient='records', force_ascii=False)};
+                        
+                        // 设置默认中心点（南宁市中心）
+                        var center = new TMap.LatLng(22.817, 108.366);
+                        
+                        if (restaurantData.length > 0) {{
+                            var avgLat = restaurantData.reduce((sum, r) => sum + r.latitude, 0) / restaurantData.length;
+                            var avgLng = restaurantData.reduce((sum, r) => sum + r.longitude, 0) / restaurantData.length;
+                            center = new TMap.LatLng(avgLat, avgLng);
+                        }}
+                        
+                        // 创建地图
+                        var map = new TMap.Map(document.getElementById('map'), {{
+                            center: center,
+                            zoom: 12
+                        }});
+                        
+                        // 添加标记
+                        var markers = new TMap.MultiMarker({{
+                            map: map,
+                            styles: {{
+                                default: new TMap.MarkerStyle({{
+                                    width: 25,
+                                    height: 35,
+                                    src: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png'
+                                }})
+                            }},
+                            geometries: restaurantData.map(r => ({{
+                                position: new TMap.LatLng(r.latitude, r.longitude),
+                                properties: {{
+                                    title: r.name || '未知餐厅',
+                                    category: r.category || '未知',
+                                    rating: r.rating || '无',
+                                    price: r.price || '未知',
+                                    hours: r.hours || '未知'
+                                }}
+                            }}))
+                        }});
+                        
+                        // 点击事件
+                        markers.on('click', function(evt) {{
+                            var info = new TMap.InfoWindow({{
+                                map: map,
+                                position: evt.geometry.position,
+                                content: `
+                                    <div style="padding:10px">
+                                        <h4>${{evt.geometry.properties.title}}</h4>
+                                        <p>类型: ${{evt.geometry.properties.category}}</p>
+                                        <p>评分: ${{evt.geometry.properties.rating}}</p>
+                                        <p>人均: ${{evt.geometry.properties.price}}</p>
+                                        <p>营业: ${{evt.geometry.properties.hours}}</p>
+                                    </div>
+                                `
+                            }});
+                        }});
+                        
+                    }} catch (error) {{
+                        console.error('地图初始化错误:', error);
+                        document.getElementById('loading').innerHTML = 
+                            '地图加载失败: ' + error.message;
                     }}
-                    
-                    // 计算中心点
-                    var centerLat = restaurantData.reduce((sum, r) => sum + r.latitude, 0) / restaurantData.length;
-                    var centerLng = restaurantData.reduce((sum, r) => sum + r.longitude, 0) / restaurantData.length;
-                    
-                    // 创建地图
-                    var map = new TMap.Map(document.getElementById('map'), {{
-                        center: new TMap.LatLng(centerLat, centerLng),
-                        zoom: 12,
-                        mapStyleId: "style1"
-                    }});
-                    
-                    // 创建标记
-                    var markerLayer = new TMap.MultiMarker({{
-                        map: map,
-                        styles: {{
-                            default: new TMap.MarkerStyle({{
-                                width: 25,
-                                height: 35,
-                                anchor: {{ x: 12, y: 35 }},
-                                src: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png"
-                            }})
-                        }},
-                        geometries: restaurantData.map(r => ({{
-                            id: r.id,
-                            styleId: "default",
-                            position: new TMap.LatLng(r.latitude, r.longitude),
-                            properties: {{
-                                name: r.name,
-                                category: r.category,
-                                rating: r.rating,
-                                price: r.price,
-                                hours: r.hours
-                            }}
-                        }}))
-                    }});
-                    
-                    // 信息窗口
-                    var infoWindow = new TMap.InfoWindow({{
-                        map: map,
-                        enableCustom: true,
-                        offset: {{ x: 0, y: -35 }}
-                    }});
-                    
-                    // 点击事件
-                    markerLayer.on("click", function(evt) {{
-                        var props = evt.geometry.properties;
-                        infoWindow.setContent(
-                            '<div class="info-window">' +
-                            '<h3>' + props.name + '</h3>' +
-                            '<p><b>类型:</b> ' + props.category + '</p>' +
-                            '<p><b>评分:</b> ' + props.rating + '</p>' +
-                            '<p><b>人均:</b> ' + props.price + '</p>' +
-                            '<p><b>营业时间:</b> ' + props.hours + '</p>' +
-                            '</div>'
-                        );
-                        infoWindow.setPosition(evt.geometry.position);
-                        infoWindow.open();
-                    }});
-                    
-                }} catch (error) {{
-                    console.error('地图初始化错误:', error);
-                    document.getElementById('loading').innerHTML = 
-                        '<div style="color:red;padding:20px;text-align:center">' +
-                        '<h3>地图加载失败</h3>' +
-                        '<p>' + error.message + '</p>' +
-                        '</div>';
                 }}
-            }}
-            
-            // 检查API是否加载
-            function checkAPI() {{
-                if (typeof TMap !== 'undefined') {{
-                    initMap();
-                }} else {{
-                    setTimeout(checkAPI, 100);
+                
+                // 检查API是否加载
+                function checkAPI() {{
+                    if (typeof TMap !== 'undefined') {{
+                        initMap();
+                    }} else {{
+                        setTimeout(checkAPI, 100);
+                    }}
                 }}
-            }}
-            
-            // 文档加载后执行
-            document.addEventListener('DOMContentLoaded', function() {{
-                checkAPI();
-            }});
-        </script>
-    </body>
-    </html>
-    """
-
-    # 显示地图
-    st.title("🍜 南宁餐厅地图（腾讯卫星图）")
-    components.html(map_html, height=600)
-
-    ###----------------腾讯地图模块(正在完善中)-----------------------
-
+                
+                // 页面加载后执行
+                document.addEventListener('DOMContentLoaded', checkAPI);
+            </script>
+        </body>
+        </html>
+        """
+        
+        # 显示地图
+        components.html(map_html, height=600)
+        ###----------------腾讯地图模块-----------------------
 
 
 
@@ -779,7 +864,6 @@ if page=="招聘个人信息简历投稿":
 
     with col1:
         st.header("个人信息表单", divider="rainbow")
-        
         # 表单输入
         with st.form("resume_form"):
             # 头像上传
@@ -828,9 +912,7 @@ if page=="招聘个人信息简历投稿":
         st.header("简历预览", divider="rainbow")
         
         # 简历样式
-        st.markdown("""
-        <style>
-        .resume-box {
+        st.markdown("""<style>.resume-box {
             border: 1px solid #e0e0e0;
             padding: 25px;
             border-radius: 15px;
@@ -896,163 +978,248 @@ if page=="招聘个人信息简历投稿":
 
 
 
-
 ###----------------------------------------------------------------------------------
 ###  模块⑤
-###  企鹅分类模型项目
+###  企鹅分类器
 ###----------------------------------------------------------------------------------
 
-###--------------------------------------------
-###                 警告！！！
-###     请务必保证项依赖文件在其文件夹下
-###             具体文件名如下
-###     penguin_utils.py        代码依赖文件
-###     penguins-chinese.csv    代码依赖数据集
-###     rfc_model.pkl           代码依赖模型文件
-###     import(文件夹)          网页依赖图片文件夹
-###            
-###     代码依赖pandas，sklearn库运行，请确保以安装该库
-###--------------------------------------------
+
+if page == "企鹅分类":
 
 
-import os
-import streamlit as st
-import pandas as pd
-import pickle
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
+    # 第八章/explore_data.py
+    import pandas as pd
 
-# 获取基础路径
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    # 设置输出右对齐，防止中文不对齐
+    pd.set_option('display.unicode.east_asian_width', True)
+    # 读取数据集，并指定字符编码为gbk，防止中文报错
+    penguin_df = pd.read_csv('penguins-chinese.csv', encoding='gbk')
 
-def get_data_path(filename):
-    """获取数据文件的完整路径"""
-    return os.path.join(BASE_DIR, filename)
+    # 输出数据框的前5行
+    print(penguin_df.head())
 
-def get_image_path(filename):
-    """获取图片文件的完整路径"""
-    return os.path.join(BASE_DIR, "images", filename)
 
-# 侧边栏导航
-with st.sidebar:
-    st.image(get_image_path('rigth_logo.png'), width=100)
-    st.title('请选择页面')
-    page = st.selectbox("请选择页面", ["简介页面", "预测分类页面", "企鹅分类"], label_visibility='collapsed')
 
-# 根据选择的页面显示不同内容
-if page == "简介页面":
-    st.title("企鹅分类器 :penguin:")
-    st.header('数据集介绍')
-    st.markdown("""帕尔默群岛企鹅数据集是用于数据探索和数据可视化的一个出色的数据集...""")
-    st.header('三种企鹅的卡通图像')
-    st.image(get_image_path('penguins.png'))
+    # 第八章/data_preprocess.py
+    import pandas as pd
 
-elif page == "预测分类页面":
-    st.header("预测企鹅分类")
-    st.markdown("输入6个信息，预测企鹅物种：")
 
-    # 加载模型（使用缓存）
-    @st.cache_resource
+    # 设置输出右对齐，防止中文不对齐
+    pd.set_option('display.unicode.east_asian_width', True)
+    # 读取数据集，并指定字符编码为gbk，防止中文报错
+    penguin_df = pd.read_csv('penguins-chinese.csv', encoding='gbk')
+    # 删除缺失值所在的行
+    penguin_df.dropna(inplace=True)
+    # 定义企鹅的种类为目标输出变量
+    output = penguin_df['企鹅的种类']
+    # 将去除年份列不作为特征列
+    # 使用企鹅栖息的岛屿、喙的长度、翅膀的长度、身体质量、性别作为特征列
+    features = penguin_df[['企鹅栖息的岛屿', '喙的长度', '喙的深度', '翅膀的长度', '身体质量', '性别']]
+    # 对特征列进行独热编码
+    features = pd.get_dummies(features)
+    # 将目标输出变量，进行转换为离散数值表示
+    output_codes, output_uniques = pd.factorize(output)
+
+
+    print('下面是去重后，目标输出变量的数据：')
+    print(output_uniques)
+    print('下面是独热编码后，特征列的数据：')
+    print(features.head())
+
+
+
+
+    # 第八章/generate_model.py
+    import pandas as pd
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import accuracy_score
+    from sklearn.model_selection import train_test_split
+
+    # 读取数据集，并指定字符编码为gbk，防止中文报错
+    penguin_df = pd.read_csv('penguins-chinese.csv', encoding='gbk')
+    # 删除缺失值所在的行
+    penguin_df.dropna(inplace=True)
+    # 定义企鹅的种类为目标输出变量
+    output = penguin_df['企鹅的种类']
+    # 将去除年份列不作为特征列
+    # 使用企鹅栖息的岛屿、喙的长度、翅膀的长度、身体质量、性别作为特征列
+    features = penguin_df[['企鹅栖息的岛屿', '喙的长度', '喙的深度', '翅膀的长度', '身体质量', '性别']]
+    # 对特征列进行独热编码
+    features = pd.get_dummies(features)
+    # 将目标输出变量，进行转换为离散数值表示
+    output_codes, output_uniques = pd.factorize(output)
+
+    # 从features和output_codes 这两个数组中划分数据集为训练集和测试集。
+    # 训练集为80%，测试集为20%（1-80%）
+    # 返回的x_train和 y_train为划分得到的训练集特征和标签。
+    # x_test和y_test为划分得到的测试集特征和标签。
+    # 这里标签和目标输出变量是一个意思
+
+    x_train, x_test, y_train, y_test = train_test_split(features, output_codes, train_size=0.8)
+
+    # 构建一个随机森林分类器
+    rfc = RandomForestClassifier()
+
+    # 使用训练集数据x_train和y_train来拟合(训练)模型。
+    rfc.fit(x_train, y_train)
+
+    # 用训练好的模型rfc对测试集数据x_test进行预测，预测结果存储在y_pred中
+    y_pred = rfc.predict(x_test)
+
+    # 计算测试集上模型的预测准确率。
+    # 方法是使用accuracy_score方法，比对真实标签y_test和预测标签y_pred
+    # 返回预测正确的样本占全部样本的比例，即准确率。
+    score = accuracy_score(y_test, y_pred)
+    print(f'该模型的准确率是：{score}')
+
+
+
+    # 第八章/save_model.py
+    import pandas as pd
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import accuracy_score
+    from sklearn.model_selection import train_test_split
+    import pickle  # 用来保存模型和output_uniques变量
+
+
+    # 读取数据集，并指定字符编码为gbk，防止中文报错
+    penguin_df = pd.read_csv('penguins-chinese.csv', encoding='gbk')
+    # 删除缺失值所在的行
+    penguin_df.dropna(inplace=True)
+    # 定义企鹅的种类为目标输出变量
+    output = penguin_df['企鹅的种类']
+    # 将去除年份列不作为特征列
+    # 使用企鹅栖息的岛屿、喙的长度、翅膀的长度、身体质量、性别作为特征列
+    features = penguin_df[['企鹅栖息的岛屿', '喙的长度', '喙的深度', '翅膀的长度', '身体质量', '性别']]
+    # 对特征列进行独热编码
+    features = pd.get_dummies(features)
+    # 将目标输出变量，进行转换为离散数值表示
+    output_codes, output_uniques = pd.factorize(output)
+
+    # 从features和output_codes 这两个数组中划分数据集为训练集和测试集。
+    # 训练集为80%，测试集为20%（1-80%）
+    # 返回的x_train和 y_train为划分得到的训练集特征和标签。
+    # x_test和y_test为划分得到的测试集特征和标签。
+    # 这里标签和目标输出变量是一个意思
+
+    x_train, x_test, y_train, y_test = train_test_split(features, output_codes, train_size=0.8)
+
+    # 构建一个随机森林分类器
+    rfc = RandomForestClassifier()
+
+    # 使用训练集数据x_train和y_train来拟合(训练)模型。
+    rfc.fit(x_train, y_train)
+
+    # 用训练好的模型rfc对测试集数据x_test进行预测，预测结果存储在y_pred中
+    y_pred = rfc.predict(x_test)
+
+    # 计算测试集上模型的预测准确率。
+    # 方法是使用accuracy_score方法，比对真实标签y_test和预测标签y_pred
+    # 返回预测正确的样本占全部样本的比例，即准确率。
+    score = accuracy_score(y_pred, y_test)
+
+    # 使用with语句，简化文件操作
+    # open()函数和'wb'参数用于创建并写入字节流
+    # pickle.dump()方法将模型对象转成字节流
+    with open('rfc_model.pkl', 'wb') as f:
+        pickle.dump(rfc, f)
+
+    # 同上
+    # 将映射变量写入文件中
+    with open('output_uniques.pkl', 'wb') as f:
+        pickle.dump(output_uniques, f)
+
+    print('保存成功，已生成相关文件。')
+
+
+
+    import streamlit as st
+    import pickle
+    import pandas as pd
+
+
+    # 加载模型（只需加载一次）
+    @st.cache_resource  # 使用缓存避免重复加载
     def load_model():
-        with open(get_data_path('rfc_model.pkl'), 'rb') as f:
+        with open('rfc_model.pkl', 'rb') as f:
             rfc_model = pickle.load(f)
-        with open(get_data_path('output_uniques.pkl'), 'rb') as f:
+        with open('output_uniques.pkl', 'rb') as f:
             output_uniques_map = pickle.load(f)
         return rfc_model, output_uniques_map
 
     rfc_model, output_uniques_map = load_model()
 
-    col_form, _, col_logo = st.columns([3, 1, 2])
-    
-    with col_form:
-        with st.form('user_inputs'):
-            island = st.selectbox(
-                '企鹅栖息的岛屿', 
-                options=['托尔森岛', '比斯科群岛', '德里姆岛'],
-                key="island_selectbox"
-            )
-            sex = st.selectbox('性别', options=['雄性', '雌性'], key="sex_selectbox")
-            bill_length = st.number_input('喙的长度（毫米）', min_value=0.0, key="bill_length")
-            bill_depth = st.number_input('喙的深度（毫米）', min_value=0.0, key="bill_depth")
-            flipper_length = st.number_input('翅膀的长度（毫米）', min_value=0.0, key="flipper_length")
-            body_mass = st.number_input('身体质量（克）', min_value=0.0, key="body_mass")
-            submitted = st.form_submit_button('预测分类')
+    # 侧边栏导航
+    with st.sidebar:
+        st.image('images/rigth_logo.png', width=100)
+        st.title('请选择页面')
+        page = st.selectbox("请选择页面", ["简介页面", "预测分类页面"], label_visibility='collapsed')
 
-    # 数据预处理
-    island_map = {
-        '比斯科群岛': (0, 0, 1),
-        '德里姆岛': (0, 1, 0),
-        '托尔森岛': (1, 0, 0)
-    }
-    island_dream, island_torgerson, island_biscoe = island_map.get(island, (0, 0, 0))
-    sex_male = 1 if sex == '雄性' else 0
-    sex_female = 1 if sex == '雌性' else 0
+    if page == "简介页面":
+        st.title("企鹅分类器 :penguin:")
+        st.header('数据集介绍')
+        st.markdown("""帕尔默群岛企鹅数据集是用于数据探索和数据可视化的一个出色的数据集...""")
+        st.header('三种企鹅的卡通图像')
+        st.image('images/penguins.png')
 
-    format_data = [
-        bill_length, bill_depth, flipper_length, body_mass,
-        island_dream, island_torgerson, island_biscoe, sex_female, sex_male
-    ]
+    elif page == "预测分类页面":
+        st.header("预测企鹅分类")
+        st.markdown("输入6个信息，预测企鹅物种：")
 
-    # 预测逻辑
-    if submitted:
-        format_data_df = pd.DataFrame(data=[format_data], columns=rfc_model.feature_names_in_)
-        predict_result_code = rfc_model.predict(format_data_df)
-        predict_result_species = output_uniques_map[predict_result_code][0]
+        col_form, _, col_logo = st.columns([3, 1, 2])
         
-        st.success(f'预测结果：**{predict_result_species}**')
-        with col_logo:
-            st.image(get_image_path(f'{predict_result_species}.png'), width=300)
-
-elif page == "企鹅分类":
-    st.markdown('<p class="main-title">企鹅分类器</p>', unsafe_allow_html=True)
-    
-    # 使用expander来创建可折叠的内容区域
-    with st.expander("显示企鹅分类数据和分析", expanded=True):
-        # 设置输出右对齐，防止中文不对齐
-        pd.set_option('display.unicode.east_asian_width', True)
-        # 读取数据集，使用相对路径
-        penguin_df = pd.read_csv(get_data_path('penguins-chinese.csv'), encoding='gbk')
-        # 输出数据框的前5行
-        st.write(penguin_df.head())
+        with col_form:
+            with st.form('user_inputs'):
+                island = st.selectbox(
+                    '企鹅栖息的岛屿', 
+                    options=['托尔森岛', '比斯科群岛', '德里姆岛'],
+                    key="island_selectbox"
+                )
+                sex = st.selectbox('性别', options=['雄性', '雌性'], key="sex_selectbox")
+                bill_length = st.number_input('喙的长度（毫米）', min_value=0.0, key="bill_length")
+                bill_depth = st.number_input('喙的深度（毫米）', min_value=0.0, key="bill_depth")
+                flipper_length = st.number_input('翅膀的长度（毫米）', min_value=0.0, key="flipper_length")
+                body_mass = st.number_input('身体质量（克）', min_value=0.0, key="body_mass")
+                submitted = st.form_submit_button('预测分类')
 
         # 数据预处理
-        penguin_df.dropna(inplace=True)
-        output = penguin_df['企鹅的种类']
-        features = penguin_df[['企鹅栖息的岛屿', '喙的长度', '喙的深度', '翅膀的长度', '身体质量', '性别']]
-        features = pd.get_dummies(features)
-        output_codes, output_uniques = pd.factorize(output)
+        island_map = {
+            '比斯科群岛': (0, 0, 1),
+            '德里姆岛': (0, 1, 0),
+            '托尔森岛': (1, 0, 0)
+        }
+        island_dream, island_torgerson, island_biscoe = island_map.get(island, (0, 0, 0))
+        sex_male = 1 if sex == '雄性' else 0
+        sex_female = 1 if sex == '雌性' else 0
 
-        st.write('下面是去重后，目标输出变量的数据：')
-        st.write(output_uniques)
-        st.write('下面是独热编码后，特征列的数据：')
-        st.write(features.head())
+        format_data = [
+            bill_length, bill_depth, flipper_length, body_mass,
+            island_dream, island_torgerson, island_biscoe, sex_female, sex_male
+        ]
 
-        # 模型训练和评估
-        x_train, x_test, y_train, y_test = train_test_split(features, output_codes, train_size=0.8)
-        rfc = RandomForestClassifier()
-        rfc.fit(x_train, y_train)
-        y_pred = rfc.predict(x_test)
-        score = accuracy_score(y_test, y_pred)
-        st.write(f'该模型的准确率是：{score}')
-
-        # 保存模型
-        with open(get_data_path('rfc_model.pkl'), 'wb') as f:
-            pickle.dump(rfc, f)
-        with open(get_data_path('output_uniques.pkl'), 'wb') as f:
-            pickle.dump(output_uniques, f)
-        st.success('保存成功，已生成相关文件。')
-
-
-
+        # 预测逻辑
+        if submitted:
+            format_data_df = pd.DataFrame(data=[format_data], columns=rfc_model.feature_names_in_)
+            predict_result_code = rfc_model.predict(format_data_df)
+            predict_result_species = output_uniques_map[predict_result_code][0]
             
+            st.success(f'预测结果：**{predict_result_species}**')
+            with col_logo:
+                st.image(f'images/{predict_result_species}.png', width=300)
+
+
+
+
+
+
 ###=====================================================================
 # 请在此段代码上方添加新代码！
 # 添加页脚
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; font-size: 0.9rem;">
-    <p>© 2025 个人网页制作演示 | CPU180 版本号：0.6.16.5</p>
+    <p>© 2025 CPU180 个人网页制作演示 |  主版本号：1.0.0 | 内部版本号：0.6.18.1</p>
 </div>
 """, unsafe_allow_html=True)
 ###=====================================================================
+
